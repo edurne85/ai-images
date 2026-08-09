@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "skott:web": "skott -nit --displayMode=webapp --trackThirdPartyDependencies --trackBuiltinDependencies src/",
+    "skott:circular": "skott -nit --showCircularDependencies --displayMode=raw"
   },
   "dependencies": {
     "react": "^19.2.8",
@@ -28,6 +30,7 @@
     "electron-builder": "^26.15.3",
     "eslint": "^10.7.0",
     "globals": "^17.7.0",
+    "skott": "^0.35.11",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.66.0",
     "vite": "^8.2.1",
