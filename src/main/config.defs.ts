@@ -24,8 +24,9 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
   const debug = rawConfig.debug ?? false;
   const silent = rawConfig.silent ?? !debug;
   const pathMapperKey: PathMapperKey = rawConfig.pathMapperKey ?? "ident";
+  // Initialize computed values:
   const pathMapper = pathMappers[pathMapperKey];
-  // TODO: Establish DB connection, pregenerate some stuff, etc.
+  // Establish DB connection:
   let db: Awaited<ReturnType<typeof open>> | null = null;
   const dbFile = pathMapper(rawConfig.dbPath);
   if (debug) {
