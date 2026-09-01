@@ -1,4 +1,4 @@
-import { type RawConfig } from "./config.defs.ts";
+import { type RawConfig } from "./config.defs";
 
 const rawConfig: RawConfig = {
   pathMapperKey: "ident",

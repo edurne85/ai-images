@@ -1,40 +1,32 @@
-import eslintReact from "@eslint-react/eslint-plugin";
-import eslintJs from "@eslint/js";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import tseslint from "typescript-eslint";
-import globals from "globals";
+import { defineConfig } from 'eslint/config'
+import tseslint from '@electron-toolkit/eslint-config-ts'
+import eslintConfigPrettier from '@electron-toolkit/eslint-config-prettier'
+import eslintPluginReact from 'eslint-plugin-react'
+import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
+import eslintPluginReactRefresh from 'eslint-plugin-react-refresh'
 
-export default [
+export default defineConfig(
+  { ignores: ['**/node_modules', '**/dist', '**/out'] },
+  tseslint.configs.recommended,
+  eslintPluginReact.configs.flat.recommended,
+  eslintPluginReact.configs.flat['jsx-runtime'],
   {
-    ignores: [
-      "dist/**",
-      "dist-electron/**",
-      "node_modules/**",
-      "vite.config.*",
-    ],
+    settings: {
+      react: {
+        version: 'detect'
+      }
+    }
   },
-  eslintJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  eslintReact.configs.recommended,
   {
-    files: ["src/**/*.ts", "src/**/*.tsx"],
-
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
+    files: ['**/*.{ts,tsx}'],
+    plugins: {
+      'react-hooks': eslintPluginReactHooks,
+      'react-refresh': eslintPluginReactRefresh
     },
-
     rules: {
-      ...tsPlugin.configs.recommended.rules,
-    },
+      ...eslintPluginReactHooks.configs.recommended.rules,
+      ...eslintPluginReactRefresh.configs.vite.rules
+    }
   },
-];
+  eslintConfigPrettier
+)

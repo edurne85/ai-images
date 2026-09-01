@@ -4,7 +4,7 @@ import {
   type PathMapper,
   pathMappers,
   type PathMapperKey,
-} from "./pathMappers.ts";
+} from "./pathMappers";
 
 type RawConfig = {
   debug?: boolean;
@@ -16,7 +16,7 @@ type RawConfig = {
 
 type Config = Required<RawConfig> & {
   pathMapper: PathMapper;
-  db: Awaited<ReturnType<typeof open>>;
+  db: Awaited<ReturnType<typeof open>> | null;
 };
 
 async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
@@ -26,18 +26,18 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
   const pathMapperKey: PathMapperKey = rawConfig.pathMapperKey ?? "ident";
   const pathMapper = pathMappers[pathMapperKey];
   // TODO: Establish DB connection, pregenerate some stuff, etc.
-  let db: Awaited<ReturnType<typeof open>>;
+  let db: Awaited<ReturnType<typeof open>> | null = null;
+  const dbFile = pathMapper(rawConfig.dbPath);
+  if (debug) {
+    sqlite3.verbose();
+  }
   try {
     db = await open({
-      filename: rawConfig.dbPath,
+      filename: dbFile,
       driver: sqlite3.Database,
     });
   } catch (error) {
     console.error(`Failed to open database at ${rawConfig.dbPath}:`, error);
-    throw error;
-  }
-  if (debug) {
-    sqlite3.verbose();
   }
   return {
     ...rawConfig,
