@@ -1,3 +1,13 @@
+/**
+ * Rationale: These types (as well as the entries on `pathMappers.ts`) exist to facilitate interop between native Windows and WSL2 environments.
+ *  If your sources and DB files exist on native Windows, set `defaultEnvironment` to `Environment.win` and paths will be automatically converted
+ *  when running on WSL. Alternatively, if the files exist on WSL, set `defaultEnvironment` to `Environment.wsl` and paths will be automatically
+ *  converted when running natively on Windows. If the sources and DB files exist on separate environments, omit the `defaultEnvironment` property
+ *  and set `sourcesEnvironment` and `dbEnvironment` instead. When setting the `sourcesPathPrefix` and `dbPath` properties, use the path format of
+ *  the environment where the files actually exist.
+ * For any scenario outside Windows + WSL mixes, no path conversion is performed, and the app will assume the paths match the running environment.
+ */
+
 import fs from 'node:fs';
 import { type PathMapperKey } from './pathMappers';
 

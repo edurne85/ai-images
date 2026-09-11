@@ -40,7 +40,7 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
             driver: sqlite3.Database,
         });
         if (debug) {
-            const tables = await db.all('SELECT name FROM sqlite_master WHERE type="table"');
+            const tables = await db.all('SELECT name FROM sqlite_master WHERE type="table" ORDER BY name ASC;');
             console.log(
                 `Opened database at ${dbFile}, found tables:\n${tables.map((row) => row.name).join(', ')}`
             );
