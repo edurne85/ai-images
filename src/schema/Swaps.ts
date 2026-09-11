@@ -1,79 +1,79 @@
-import { RecordBase, type RecordPendingAction } from "./base";
-import { FilesRecord, type FilesRecordEntry, getFilesRecord } from "./Files";
+import { RecordBase, type RecordPendingAction } from './base';
+import { FilesRecord, type FilesRecordEntry, getFilesRecord } from './Files';
 
 type SwapsRawBuilder = {
-  action: RecordPendingAction;
-  id: number;
-  source: FilesRecordEntry;
-  date: SqlSimpleDate;
-  output: string;
+    action: RecordPendingAction;
+    id: number;
+    source: FilesRecordEntry;
+    date: SqlSimpleDate;
+    output: string;
 };
 
 class SwapsRecord extends RecordBase {
-  #id: number;
-  #source: FilesRecord;
-  #date: SqlSimpleDate;
-  #output: string;
+    #id: number;
+    #source: FilesRecord;
+    #date: SqlSimpleDate;
+    #output: string;
 
-  constructor({ action = "none", id, source, date, output }: SwapsRawBuilder) {
-    super(action);
-    this.#id = id;
-    this.#source = getFilesRecord(source);
-    this.#date = date;
-    this.#output = output;
-  }
-
-  get id(): number {
-    return this.#id;
-  }
-
-  get source(): FilesRecord {
-    return this.#source;
-  }
-
-  set source(value: FilesRecordEntry) {
-    const sourceRecord = getFilesRecord(value);
-    if (sourceRecord.action === "delete") {
-      throw new Error(`Cannot set source to a file marked for deletion.`);
-    } else if (sourceRecord.action === "invalid") {
-      throw new Error(`Cannot set source to a file marked as invalid.`);
+    constructor({ action = 'none', id, source, date, output }: SwapsRawBuilder) {
+        super(action);
+        this.#id = id;
+        this.#source = getFilesRecord(source);
+        this.#date = date;
+        this.#output = output;
     }
-    this.#source = sourceRecord;
-    this.action = "update";
-  }
 
-  get date(): SqlSimpleDate {
-    return this.#date;
-  }
-
-  set date(value: SqlSimpleDate) {
-    const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
-    const matches = dateRegex.exec(value); // This line seems unnecessary, but it can be used for debugging or logging if needed.
-    if (!matches || matches.length !== 4) {
-      throw new Error(`Invalid date format. Expected YYYY-MM-DD.`);
+    get id(): number {
+        return this.#id;
     }
-    const month = parseInt(matches[2], 10);
-    const day = parseInt(matches[3], 10);
-    if (month < 1 || month > 12) {
-      throw new Error(`Invalid month in date. Expected 01-12.`);
-    }
-    if (day < 1 || day > 31) {
-      throw new Error(`Invalid day in date. Expected 01-31.`);
-    }
-    this.#date = value;
-    this.action = "update";
-  }
 
-  get output(): string {
-    return this.#output;
-  }
+    get source(): FilesRecord {
+        return this.#source;
+    }
 
-  set output(value: string) {
-    this.#output = value;
-    this.action = "update";
-  }
+    set source(value: FilesRecordEntry) {
+        const sourceRecord = getFilesRecord(value);
+        if (sourceRecord.action === 'delete') {
+            throw new Error(`Cannot set source to a file marked for deletion.`);
+        } else if (sourceRecord.action === 'invalid') {
+            throw new Error(`Cannot set source to a file marked as invalid.`);
+        }
+        this.#source = sourceRecord;
+        this.action = 'update';
+    }
+
+    get date(): SqlSimpleDate {
+        return this.#date;
+    }
+
+    set date(value: SqlSimpleDate) {
+        const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
+        const matches = dateRegex.exec(value); // This line seems unnecessary, but it can be used for debugging or logging if needed.
+        if (!matches || matches.length !== 4) {
+            throw new Error(`Invalid date format. Expected YYYY-MM-DD.`);
+        }
+        const month = parseInt(matches[2], 10);
+        const day = parseInt(matches[3], 10);
+        if (month < 1 || month > 12) {
+            throw new Error(`Invalid month in date. Expected 01-12.`);
+        }
+        if (day < 1 || day > 31) {
+            throw new Error(`Invalid day in date. Expected 01-31.`);
+        }
+        this.#date = value;
+        this.action = 'update';
+    }
+
+    get output(): string {
+        return this.#output;
+    }
+
+    set output(value: string) {
+        this.#output = value;
+        this.action = 'update';
+    }
 }
 
-const Swaps: Record<SwapsRecord["id"], SwapsRecord> = {};
+const Swaps: Record<SwapsRecord['id'], SwapsRecord> = {};
 
 export { SwapsRecord, Swaps };

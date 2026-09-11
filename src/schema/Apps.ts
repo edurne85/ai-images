@@ -1,133 +1,129 @@
-import { RecordBase, type RecordPendingAction } from "./base";
-import {
-  FoldersRecord,
-  type FoldersRecordEntry,
-  getFoldersRecord,
-} from "./Folders";
+import { RecordBase, type RecordPendingAction } from './base';
+import { FoldersRecord, type FoldersRecordEntry, getFoldersRecord } from './Folders';
 
 type AppsRawBuilder = {
-  action: RecordPendingAction;
-  id: number;
-  title: string;
-  playId: string;
-  installed: boolean;
-  paid: boolean;
-  discarded: boolean;
-  syncFolder: Nullable<FoldersRecordEntry>;
-  notes: string;
+    action: RecordPendingAction;
+    id: number;
+    title: string;
+    playId: string;
+    installed: boolean;
+    paid: boolean;
+    discarded: boolean;
+    syncFolder: Nullable<FoldersRecordEntry>;
+    notes: string;
 };
 
 class AppsRecord extends RecordBase {
-  #id: number;
-  #title: string;
-  #playId: string;
-  #installed: boolean;
-  #paid: boolean;
-  #discarded: boolean;
-  #syncFolder: Nullable<FoldersRecord>;
-  #notes: string;
+    #id: number;
+    #title: string;
+    #playId: string;
+    #installed: boolean;
+    #paid: boolean;
+    #discarded: boolean;
+    #syncFolder: Nullable<FoldersRecord>;
+    #notes: string;
 
-  constructor({
-    action = "none",
-    id,
-    title,
-    playId,
-    installed = false,
-    paid = false,
-    discarded = false,
-    syncFolder = null,
-    notes = "",
-  }: AppsRawBuilder) {
-    super(action);
-    this.#id = id;
-    this.#title = title;
-    this.#playId = playId;
-    this.#installed = installed;
-    this.#paid = paid;
-    this.#discarded = discarded;
-    this.#syncFolder = syncFolder ? getFoldersRecord(syncFolder) : null;
-    this.#notes = notes;
-  }
-
-  get id(): number {
-    return this.#id;
-  }
-
-  get title(): string {
-    return this.#title;
-  }
-
-  set title(value: string) {
-    this.#title = value;
-    this.action = "update";
-  }
-
-  get playId(): string {
-    return this.#playId;
-  }
-
-  set playId(value: string) {
-    this.#playId = value;
-    this.action = "update";
-  }
-
-  get installed(): boolean {
-    return this.#installed;
-  }
-
-  set installed(value: boolean) {
-    this.#installed = value;
-    this.action = "update";
-  }
-
-  get paid(): boolean {
-    return this.#paid;
-  }
-
-  set paid(value: boolean) {
-    this.#paid = value;
-    this.action = "update";
-  }
-
-  get discarded(): boolean {
-    return this.#discarded;
-  }
-
-  set discarded(value: boolean) {
-    this.#discarded = value;
-    this.action = "update";
-  }
-
-  get syncFolder(): Nullable<FoldersRecord> {
-    return this.#syncFolder;
-  }
-
-  set syncFolder(value: Nullable<FoldersRecordEntry>) {
-    if (value === null) {
-      this.#syncFolder = null;
-      this.action = "update";
-      return;
+    constructor({
+        action = 'none',
+        id,
+        title,
+        playId,
+        installed = false,
+        paid = false,
+        discarded = false,
+        syncFolder = null,
+        notes = '',
+    }: AppsRawBuilder) {
+        super(action);
+        this.#id = id;
+        this.#title = title;
+        this.#playId = playId;
+        this.#installed = installed;
+        this.#paid = paid;
+        this.#discarded = discarded;
+        this.#syncFolder = syncFolder ? getFoldersRecord(syncFolder) : null;
+        this.#notes = notes;
     }
-    const syncFolderRecord = getFoldersRecord(value);
-    if (syncFolderRecord.action === "delete") {
-      throw new Error(`Cannot set syncFolder to a folder marked for deletion.`);
-    } else if (syncFolderRecord.action === "invalid") {
-      throw new Error(`Cannot set syncFolder to a folder marked as invalid.`);
+
+    get id(): number {
+        return this.#id;
     }
-    this.#syncFolder = syncFolderRecord;
-    this.action = "update";
-  }
 
-  get notes(): string {
-    return this.#notes;
-  }
+    get title(): string {
+        return this.#title;
+    }
 
-  set notes(value: string) {
-    this.#notes = value;
-    this.action = "update";
-  }
+    set title(value: string) {
+        this.#title = value;
+        this.action = 'update';
+    }
+
+    get playId(): string {
+        return this.#playId;
+    }
+
+    set playId(value: string) {
+        this.#playId = value;
+        this.action = 'update';
+    }
+
+    get installed(): boolean {
+        return this.#installed;
+    }
+
+    set installed(value: boolean) {
+        this.#installed = value;
+        this.action = 'update';
+    }
+
+    get paid(): boolean {
+        return this.#paid;
+    }
+
+    set paid(value: boolean) {
+        this.#paid = value;
+        this.action = 'update';
+    }
+
+    get discarded(): boolean {
+        return this.#discarded;
+    }
+
+    set discarded(value: boolean) {
+        this.#discarded = value;
+        this.action = 'update';
+    }
+
+    get syncFolder(): Nullable<FoldersRecord> {
+        return this.#syncFolder;
+    }
+
+    set syncFolder(value: Nullable<FoldersRecordEntry>) {
+        if (value === null) {
+            this.#syncFolder = null;
+            this.action = 'update';
+            return;
+        }
+        const syncFolderRecord = getFoldersRecord(value);
+        if (syncFolderRecord.action === 'delete') {
+            throw new Error(`Cannot set syncFolder to a folder marked for deletion.`);
+        } else if (syncFolderRecord.action === 'invalid') {
+            throw new Error(`Cannot set syncFolder to a folder marked as invalid.`);
+        }
+        this.#syncFolder = syncFolderRecord;
+        this.action = 'update';
+    }
+
+    get notes(): string {
+        return this.#notes;
+    }
+
+    set notes(value: string) {
+        this.#notes = value;
+        this.action = 'update';
+    }
 }
 
-const Apps: Record<AppsRawBuilder["id"], AppsRecord> = {};
+const Apps: Record<AppsRawBuilder['id'], AppsRecord> = {};
 
 export { AppsRecord, Apps };

@@ -1,54 +1,65 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
-import {
-  type PathMapper,
-  pathMappers,
-  type PathMapperKey,
-} from "./pathMappers";
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
+import { type PathMapper, pathMappers } from './pathMappers';
+import { getRunningEnvironment, pickMapper, type Environments } from './Environment';
 
-type RawConfig = {
-  debug?: boolean;
-  silent?: boolean;
-  pathMapperKey?: PathMapperKey;
-  sourcesPathPrefix: string;
-  dbPath: string;
+type RawConfig = Environments & {
+    debug?: boolean;
+    silent?: boolean;
+    sourcesPathPrefix: string;
+    dbPath: string;
 };
 
-type Config = Required<RawConfig> & {
-  pathMapper: PathMapper;
-  db: Awaited<ReturnType<typeof open>> | null;
+type CleanRawConfig = Environments & Required<Omit<RawConfig, keyof Environments>>;
+
+type Config = CleanRawConfig & {
+    sourcesPathMapper: PathMapper;
+    dbPathMapper: PathMapper;
+    db: Awaited<ReturnType<typeof open>> | null;
+    runningEnvironment: ReturnType<typeof getRunningEnvironment>;
 };
 
 async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
-  // Initialize optional values:
-  const debug = rawConfig.debug ?? false;
-  const silent = rawConfig.silent ?? !debug;
-  const pathMapperKey: PathMapperKey = rawConfig.pathMapperKey ?? "ident";
-  // Initialize computed values:
-  const pathMapper = pathMappers[pathMapperKey];
-  // Establish DB connection:
-  let db: Awaited<ReturnType<typeof open>> | null = null;
-  const dbFile = pathMapper(rawConfig.dbPath);
-  if (debug) {
-    sqlite3.verbose();
-  }
-  try {
-    db = await open({
-      filename: dbFile,
-      driver: sqlite3.Database,
-    });
-  } catch (error) {
-    console.error(`Failed to open database at ${rawConfig.dbPath}:`, error);
-  }
-  return {
-    ...rawConfig,
-    debug,
-    silent,
-    pathMapperKey,
-    // Additional / computed values:
-    pathMapper,
-    db,
-  };
+    // Initialize optional values:
+    const debug = rawConfig.debug ?? false;
+    const silent = rawConfig.silent ?? !debug;
+    const sourcesEnvironment = rawConfig.sourcesEnvironment ?? rawConfig.defaultEnvironment;
+    const dbEnvironment = rawConfig.dbEnvironment ?? rawConfig.defaultEnvironment;
+    const runningEnvironment = getRunningEnvironment();
+    const sourcesPathMapper = pathMappers[pickMapper(runningEnvironment, sourcesEnvironment)];
+    const dbPathMapper = pathMappers[pickMapper(runningEnvironment, dbEnvironment)];
+    // Establish DB connection:
+    let db: Awaited<ReturnType<typeof open>> | null = null;
+    const dbFile = dbPathMapper(rawConfig.dbPath);
+    if (debug) {
+        sqlite3.verbose();
+    }
+    try {
+        db = await open({
+            filename: dbFile,
+            driver: sqlite3.Database,
+        });
+        if (debug) {
+            const tables = await db.all('SELECT name FROM sqlite_master WHERE type="table"');
+            console.log(
+                `Opened database at ${dbFile}, found tables:\n${tables.map((row) => row.name).join(', ')}`
+            );
+        }
+    } catch (error) {
+        console.error(`Failed to open database at ${rawConfig.dbPath}:`, error);
+    }
+    return {
+        ...rawConfig,
+        debug,
+        silent,
+        // Additional / computed values:
+        sourcesEnvironment,
+        dbEnvironment,
+        runningEnvironment,
+        sourcesPathMapper,
+        dbPathMapper,
+        db,
+    };
 }
 
 export type { RawConfig, Config };
