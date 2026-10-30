@@ -18,6 +18,18 @@ abstract class RecordBase {
     delete(): void {
         this.#action = 'delete';
     }
+
+    changed(): void {
+        if (this.#action === 'none') {
+            this.#action = 'update';
+        }
+    }
+
+    updated(): void {
+        if (this.#action === 'update') {
+            this.#action = 'none';
+        }
+    }
 }
 
 function clearRecords<T extends string | number | symbol, R>(records: Record<T, R>): void {

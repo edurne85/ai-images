@@ -4,6 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
+import { FoldersLink } from '../schema/Folders.db';
+import { AppsLink } from '../schema/Apps.db';
 
 let config: Config | null = null;
 
@@ -59,6 +61,22 @@ app.whenReady().then(async () => {
         config = await initializeConfig(rawConfig);
         if (config.debug) {
             console.debug('Processed config', config);
+        }
+        if (config.db) {
+            const foldersLink = new FoldersLink(config.db);
+            foldersLink.dbFetchAll().then((data) => {
+                if (config!.debug) {
+                    console.debug(`Fetched ${Object.keys(data).length} folders`);
+                }
+            });
+            const appsLink = new AppsLink(config.db);
+            appsLink.dbFetchAll().then((data) => {
+                if (config!.debug) {
+                    console.debug(`Fetched ${Object.keys(data).length} apps`);
+                }
+            });
+        } else {
+            console.warn('No database connection available');
         }
     } catch (error) {
         console.error('Failed to initialize config', error);
