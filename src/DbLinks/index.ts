@@ -41,14 +41,6 @@ class DbLinks {
         await this.#swaps.dbFetchAll();
     }
 
-    async safeRefresh(): Promise<void> {
-        await this.#folders.safeRefresh();
-        await this.#tags.safeRefresh();
-        await this.#apps.safeRefresh(this.#folders.data);
-        await this.#files.safeRefresh(this.#folders.data);
-        await this.#swaps.safeRefresh(this.#files.data);
-    }
-
     get dbLink(): DbLink {
         return this.#dblink;
     }

@@ -49,6 +49,20 @@ class SwapsLink extends DbTableLinkBase<SwapsRecord, SwapsRow, number> {
         }
     }
 
+    async applyInsertions(): Promise<void> {
+        const query = `INSERT INTO Swaps (ID, Source, Date, File, Fail) VALUES (?, ?, ?, ?, ?)`;
+        for (const record of Object.values(this.data).filter((r) => r.action === 'insert')) {
+            await this.dbLink.run(query, [
+                record.id,
+                record.source.id,
+                record.date,
+                record.output,
+                record.fail ? 1 : 0,
+            ]);
+            record.updated(); // Reset action after insertion
+        }
+    }
+
     checkLinks(files: FilesData): void {
         for (const record of Object.values(this.data)) {
             if (typeof record.source === 'number') {
@@ -67,9 +81,13 @@ class SwapsLink extends DbTableLinkBase<SwapsRecord, SwapsRow, number> {
         }
     }
 
-    safeRefresh(files: FilesData): Promise<Record<number, SwapsRecord>> {
+    async refreshData(
+        newData: Record<number, SwapsRecord>,
+        files: FilesData
+    ): Promise<Record<number, SwapsRecord>> {
+        this.data = newData;
         this.checkLinks(files);
-        return this.refresh();
+        return await this.refresh();
     }
 }
 

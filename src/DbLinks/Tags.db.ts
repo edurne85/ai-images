@@ -32,8 +32,17 @@ class TagsLink extends DbTableLinkBase<TagsRecord, TagsRow, number> {
         }
     }
 
-    safeRefresh(): Promise<TagsData> {
-        return this.refresh();
+    async applyInsertions(): Promise<void> {
+        const query = `INSERT INTO Tags (ID, Tag) VALUES (?, ?)`;
+        for (const record of Object.values(this.data).filter((r) => r.action === 'insert')) {
+            await this.dbLink.run(query, [record.id, record.tag]);
+            record.updated(); // Reset action after insertion
+        }
+    }
+
+    async refreshData(newData: TagsData): Promise<TagsData> {
+        this.data = newData;
+        return await this.refresh();
     }
 }
 

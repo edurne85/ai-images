@@ -1,4 +1,4 @@
-import { FoldersRecord, Folders } from '../schema';
+import { FoldersRecord, Folders, FoldersData } from '../schema';
 import { type DbLink, DbTableLinkBase } from './base';
 
 type FoldersRow = {
@@ -46,8 +46,22 @@ class FoldersLink extends DbTableLinkBase<FoldersRecord, FoldersRow, number> {
         }
     }
 
-    safeRefresh(): Promise<Record<number, FoldersRecord>> {
-        return this.refresh();
+    async applyInsertions(): Promise<void> {
+        const query = `INSERT INTO SourceFolders (ID, Source, Sync, Notes) VALUES (?, ?, ?, ?)`;
+        for (const record of Object.values(this.data).filter((r) => r.action === 'insert')) {
+            await this.dbLink.run(query, [
+                record.id,
+                record.name,
+                record.sync ? 1 : 0,
+                record.notes,
+            ]);
+            record.updated(); // Reset action after insertion
+        }
+    }
+
+    async refreshData(newData: FoldersData): Promise<FoldersData> {
+        this.data = newData;
+        return await this.refresh();
     }
 }
 

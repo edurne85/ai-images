@@ -48,6 +48,14 @@ class FilesLink extends DbTableLinkBase<FilesRecord, FilesRow, number> {
         }
     }
 
+    async applyInsertions(): Promise<void> {
+        const query = `INSERT INTO SourceFiles (ID, Folder, File, Notes) VALUES (?, ?, ?, ?)`;
+        for (const record of Object.values(this.data).filter((r) => r.action === 'insert')) {
+            await this.dbLink.run(query, [record.id, record.folder.id, record.name, record.notes]);
+            record.updated(); // Reset action after insertion
+        }
+    }
+
     checkFolderLinks(folders: FoldersData): void {
         for (const record of Object.values(this.data)) {
             // Checking folder link: [SourceFiles].[Folder] -> [SourceFolders].[ID]
@@ -67,10 +75,18 @@ class FilesLink extends DbTableLinkBase<FilesRecord, FilesRow, number> {
         }
     }
 
-    safeRefresh(folders: FoldersData): Promise<Record<number, FilesRecord>> {
+    async safeRefresh(folders: FoldersData): Promise<Record<number, FilesRecord>> {
         this.checkFolderLinks(folders);
         // TODO: Implement checks for tags (via SourceFileTags doubly-linked table).
-        return this.refresh();
+        return await this.refresh();
+    }
+
+    async refreshData(
+        newData: Record<number, FilesRecord>,
+        folders: FoldersData
+    ): Promise<Record<number, FilesRecord>> {
+        this.data = newData;
+        return await this.safeRefresh(folders);
     }
 }
 

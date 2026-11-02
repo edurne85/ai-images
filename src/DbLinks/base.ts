@@ -31,6 +31,7 @@ abstract class DbTableLinkBase<T extends RecordBase, Row, K extends Key = Key> {
     get data(): Record<K, T> {
         return this.#data;
     }
+
     abstract objFromRow(row: Row): T;
     abstract getKey(record: T): K;
     async dbFetchEntry(key: K): Promise<T | null> {
@@ -60,6 +61,8 @@ abstract class DbTableLinkBase<T extends RecordBase, Row, K extends Key = Key> {
     }
 
     abstract applyUpdates(): Promise<void>;
+    abstract applyInsertions(): Promise<void>;
+
     async applyDeletions(): Promise<void> {
         const entriesToDelete = Object.values(this.#data)
             .map((r) => r as T)
@@ -86,6 +89,23 @@ abstract class DbTableLinkBase<T extends RecordBase, Row, K extends Key = Key> {
         this.applyUpdates();
         this.applyDeletions();
         return this.dbFetchAll();
+    }
+
+    protected set data(newData: Record<K, T>) {
+        const dataCopy = { ...this.#data };
+        for (const key in Object.keys(dataCopy)) {
+            if (Object.hasOwnProperty.apply(this.#data, [key])) {
+                dataCopy[key].action = 'update';
+            } else {
+                dataCopy[key].action = 'insert';
+            }
+        }
+        for (const key in Object.keys(this.#data)) {
+            if (!Object.hasOwnProperty.apply(dataCopy, [key])) {
+                newData[key].action = 'delete';
+            }
+        }
+        this.#data = newData;
     }
 }
 

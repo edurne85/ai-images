@@ -54,6 +54,23 @@ class AppsLink extends DbTableLinkBase<AppsRecord, AppsRow, number> {
         }
     }
 
+    async applyInsertions(): Promise<void> {
+        const query = `INSERT INTO Apps (ID, 'Display Title', 'Google Play Id', Installed, Paid, Discarded, 'Sync Folder', Notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        for (const record of Object.values(this.data).filter((r) => r.action === 'insert')) {
+            await this.dbLink.run(query, [
+                record.id,
+                record.title,
+                record.playId,
+                record.installed ? 1 : 0,
+                record.paid ? 1 : 0,
+                record.discarded ? 1 : 0,
+                record.syncFolder?.id || null,
+                record.notes || null,
+            ]);
+            record.updated(); // Reset action after insertion
+        }
+    }
+
     checkLinks(folders: FoldersData): void {
         for (const record of Object.values(this.data)) {
             if (typeof record.syncFolder === 'number') {
@@ -72,9 +89,10 @@ class AppsLink extends DbTableLinkBase<AppsRecord, AppsRow, number> {
         }
     }
 
-    safeRefresh(folders: FoldersData): Promise<AppsData> {
+    async refreshData(newData: AppsData, folders: FoldersData): Promise<AppsData> {
+        this.data = newData;
         this.checkLinks(folders);
-        return this.refresh();
+        return await this.refresh();
     }
 }
 

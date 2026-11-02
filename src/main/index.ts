@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset';
 import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
 import { DbLinks } from '../DbLinks';
+import { registerDbApiHandlers } from './dbApi';
 
 let config: Config | null = null;
 
@@ -69,15 +70,16 @@ app.whenReady().then(async () => {
                 if (config!.debug) {
                     console.debug(
                         'Fetched data:\n',
-                            `\t${dataLink.foldersCount} folders,\n`,
-                            `\t${dataLink.tagsCount} tags,\n`,
-                            `\t${dataLink.appsCount} apps,\n`,
-                            `\t${dataLink.filesCount} files,\n`,
-                            `\t${dataLink.swapsCount} swaps,\n`,
-                            `\t${dataLink.fileTagsCount} file tags entries`
+                        `\t${dataLink.foldersCount} folders,\n`,
+                        `\t${dataLink.tagsCount} tags,\n`,
+                        `\t${dataLink.appsCount} apps,\n`,
+                        `\t${dataLink.filesCount} files,\n`,
+                        `\t${dataLink.swapsCount} swaps,\n`,
+                        `\t${dataLink.fileTagsCount} file tags entries`
                     );
                 }
             });
+            registerDbApiHandlers(dataLink);
         } else {
             console.warn('No database connection available');
         }
