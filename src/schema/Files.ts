@@ -30,7 +30,7 @@ type FilesRawBuilder = {
     id: number;
     folder: number;
     name: string;
-    notes: string;
+    notes: string | null;
     tags: TagEntry[];
 };
 
@@ -38,10 +38,10 @@ class FilesRecord extends RecordBase {
     #id: number;
     #folder: number;
     #name: string;
-    #notes: string;
+    #notes: string | null;
     #tags: Set<TagsRecord>;
 
-    constructor({ action = 'none', id, folder, name, notes = '', tags = [] }: FilesRawBuilder) {
+    constructor({ action = 'none', id, folder, name, notes = null, tags = [] }: FilesRawBuilder) {
         super(action);
         this.#id = id;
         this.#folder = folder;
@@ -89,11 +89,11 @@ class FilesRecord extends RecordBase {
         this.action = 'update';
     }
 
-    get notes(): string {
+    get notes(): string | null {
         return this.#notes;
     }
 
-    set notes(value: string) {
+    set notes(value: string | null) {
         this.#notes = value;
         this.action = 'update';
     }

@@ -1,11 +1,11 @@
-import { FoldersRecord, Folders } from '../schema/Folders';
+import { FoldersRecord, Folders } from '../schema';
 import { type DbLink, DbTableLinkBase } from './base';
 
 type FoldersRow = {
     ID: number;
     Source: string;
     Sync: number; // 0 or 1
-    Notes: string;
+    Notes: string | null;
 };
 
 class FoldersLink extends DbTableLinkBase<FoldersRecord, FoldersRow, number> {
@@ -24,7 +24,7 @@ class FoldersLink extends DbTableLinkBase<FoldersRecord, FoldersRow, number> {
             id: row['ID'],
             name: row['Source'],
             sync: !!row['Sync'],
-            notes: row['Notes'] || '',
+            notes: row['Notes'] || null,
         });
     }
 

@@ -33,4 +33,7 @@ class TagsRecord extends RecordBase {
 const Tags: Record<TagsRecord['id'], TagsRecord> = {};
 const TagsByTag: Record<TagsRecord['tag'], TagsRecord> = {};
 
-export { TagsRecord, Tags, TagsByTag };
+type TagsData = typeof Tags;
+type TagsByTagData = typeof TagsByTag;
+
+export { TagsRecord, Tags, TagsByTag, type TagsData, type TagsByTagData };

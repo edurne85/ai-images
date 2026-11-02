@@ -5,16 +5,16 @@ type FoldersRawBuilder = {
     id: number;
     name: string;
     sync: boolean;
-    notes: string;
+    notes: string | null;
 };
 
 class FoldersRecord extends RecordBase {
     #id: number;
     #name: string;
     #sync: boolean;
-    #notes: string;
+    #notes: string | null;
 
-    constructor({ action = 'none', id, name, sync = false, notes = '' }: FoldersRawBuilder) {
+    constructor({ action = 'none', id, name, sync = false, notes = null }: FoldersRawBuilder) {
         super(action);
         this.#id = id;
         this.#name = name;
@@ -44,17 +44,19 @@ class FoldersRecord extends RecordBase {
         this.action = 'update';
     }
 
-    get notes(): string {
+    get notes(): string | null {
         return this.#notes;
     }
 
-    set notes(value: string) {
+    set notes(value: string | null) {
         this.#notes = value;
         this.action = 'update';
     }
 }
 
 const Folders: Record<FoldersRawBuilder['id'], FoldersRecord> = {};
+
+type FoldersData = typeof Folders;
 
 type FoldersRecordEntry = FoldersRecord | number;
 
@@ -69,4 +71,4 @@ function getFoldersRecord(entry: FoldersRecordEntry): FoldersRecord {
     return folderRecord;
 }
 
-export { FoldersRecord, Folders, type FoldersRecordEntry, getFoldersRecord };
+export { FoldersRecord, Folders, type FoldersData, type FoldersRecordEntry, getFoldersRecord };

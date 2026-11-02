@@ -4,8 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
-import { FoldersLink } from '../dblinks/Folders.db';
-import { AppsLink } from '../dblinks/Apps.db';
+import { AppsLink, FoldersLink, FilesLink } from '../dblinks';
 
 let config: Config | null = null;
 
@@ -73,6 +72,12 @@ app.whenReady().then(async () => {
             appsLink.dbFetchAll().then((data) => {
                 if (config!.debug) {
                     console.debug(`Fetched ${Object.keys(data).length} apps`);
+                }
+            });
+            const filesLink = new FilesLink(config.db);
+            filesLink.dbFetchAll().then((data) => {
+                if (config!.debug) {
+                    console.debug(`Fetched ${Object.keys(data).length} files`);
                 }
             });
         } else {

@@ -10,7 +10,7 @@ type AppsRawBuilder = {
     paid: boolean;
     discarded: boolean;
     syncFolder: Nullable<FoldersRecordEntry>;
-    notes: string;
+    notes: string | null;
 };
 
 class AppsRecord extends RecordBase {
@@ -21,7 +21,7 @@ class AppsRecord extends RecordBase {
     #paid: boolean;
     #discarded: boolean;
     #syncFolder: Nullable<FoldersRecord>;
-    #notes: string;
+    #notes: string | null;
 
     constructor({
         action = 'none',
@@ -32,7 +32,7 @@ class AppsRecord extends RecordBase {
         paid = false,
         discarded = false,
         syncFolder = null,
-        notes = '',
+        notes = null,
     }: AppsRawBuilder) {
         super(action);
         this.#id = id;
@@ -114,11 +114,11 @@ class AppsRecord extends RecordBase {
         this.action = 'update';
     }
 
-    get notes(): string {
+    get notes(): string | null {
         return this.#notes;
     }
 
-    set notes(value: string) {
+    set notes(value: string | null) {
         this.#notes = value;
         this.action = 'update';
     }

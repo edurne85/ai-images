@@ -1,0 +1,76 @@
+import { RecordBase, FilesRecord, Files, FoldersData } from '../schema';
+import { type DbLink, DbTableLinkBase } from './base';
+
+type FilesRow = {
+    ID: number;
+    Folder: number;
+    File: string;
+    Notes: string | null;
+};
+
+class FilesLink extends DbTableLinkBase<FilesRecord, FilesRow, number> {
+    constructor(dbLink: DbLink) {
+        super({
+            dbLink,
+            data: Files,
+            tableName: 'SourceFiles',
+            keyFieldName: 'ID',
+        });
+    }
+
+    objFromRow(row: FilesRow): FilesRecord {
+        return new FilesRecord({
+            action: 'none',
+            id: row['ID'],
+            folder: row['Folder'],
+            name: row['File'],
+            notes: row['Notes'] || null,
+            tags: [],
+        });
+    }
+
+    getKey(record: FilesRecord): number {
+        return record.id;
+    }
+
+    async applyUpdates(): Promise<void> {
+        const query = `UPDATE SourceFiles SET ID = ?, Folder = ?, File = ?, Notes = ? WHERE ID = ?`;
+        for (const record of Object.values(this.data).filter((r) => r.action === 'update')) {
+            await this.dbLink.run(query, [
+                record.id,
+                record.folder.id,
+                record.name,
+                record.notes,
+                record.id,
+            ]);
+            record.updated(); // Reset action after update
+        }
+    }
+
+    checkFolderLinks(folders: FoldersData): void {
+        for (const record of Object.values(this.data)) {
+            // Checking folder link: [SourceFiles].[Folder] -> [SourceFolders].[ID]
+            if (typeof record.folder === 'number') {
+                if (!folders[record.folder]) {
+                    throw new Error(
+                        `Folder with id ${record.folder} does not exist for file with id ${record.id}.`
+                    );
+                }
+            } else if (record.folder instanceof RecordBase) {
+                if (!folders[record.folder.id]) {
+                    throw new Error(
+                        `Folder with id ${record.folder.id} does not exist for file with id ${record.id}.`
+                    );
+                }
+            }
+        }
+    }
+
+    safeRefresh(folders: FoldersData): Promise<Record<number, FilesRecord>> {
+        this.checkFolderLinks(folders);
+        // TODO: Implement checks for tags (via SourceFileTags doubly-linked table).
+        return this.refresh();
+    }
+}
+
+export { type FilesRow, FilesLink };

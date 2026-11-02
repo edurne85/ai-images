@@ -1,9 +1,5 @@
-import { AppsRecord, Apps } from '../schema/Apps';
-import { RecordBase } from '../schema/base';
+import { RecordBase, AppsRecord, Apps, type FoldersData } from '../schema';
 import { type DbLink, DbTableLinkBase } from './base';
-import { type Folders } from '../schema/Folders';
-
-type FoldersData = typeof Folders;
 
 type AppsRow = {
     ID: number;
@@ -20,7 +16,7 @@ class AppsLink extends DbTableLinkBase<AppsRecord, AppsRow, number> {
         super({
             dbLink,
             data: Apps,
-            tableName: 'apps',
+            tableName: 'Apps',
             keyFieldName: 'ID',
         });
     }
@@ -34,14 +30,14 @@ class AppsLink extends DbTableLinkBase<AppsRecord, AppsRow, number> {
             paid: !!row['Paid'],
             discarded: !!row['Discarded'],
             syncFolder: row['Sync Folder'],
-            notes: row['Notes'] || '',
+            notes: row['Notes'] || null,
         });
     }
     getKey(record: AppsRecord): number {
         return record.id;
     }
     async applyUpdates(): Promise<void> {
-        const query = `UPDATE apps SET ID = ?, 'Display Title' = ?, 'Google Play Id' = ?, Installed = ?, Paid = ?, Discarded = ?, 'Sync Folder' = ?, Notes = ? WHERE ID = ?`;
+        const query = `UPDATE Apps SET ID = ?, 'Display Title' = ?, 'Google Play Id' = ?, Installed = ?, Paid = ?, Discarded = ?, 'Sync Folder' = ?, Notes = ? WHERE ID = ?`;
         for (const record of Object.values(this.data).filter((r) => r.action === 'update')) {
             await this.dbLink.run(query, [
                 record.id,
