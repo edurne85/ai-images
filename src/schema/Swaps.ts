@@ -7,6 +7,7 @@ type SwapsRawBuilder = {
     source: FilesRecordEntry;
     date: SqlSimpleDate;
     output: string;
+    fail?: boolean;
 };
 
 class SwapsRecord extends RecordBase {
@@ -14,13 +15,15 @@ class SwapsRecord extends RecordBase {
     #source: FilesRecord;
     #date: SqlSimpleDate;
     #output: string;
+    #fail: boolean;
 
-    constructor({ action = 'none', id, source, date, output }: SwapsRawBuilder) {
+    constructor({ action = 'none', id, source, date, output, fail = false }: SwapsRawBuilder) {
         super(action);
         this.#id = id;
         this.#source = getFilesRecord(source);
         this.#date = date;
         this.#output = output;
+        this.#fail = fail;
     }
 
     get id(): number {
@@ -72,8 +75,32 @@ class SwapsRecord extends RecordBase {
         this.#output = value;
         this.action = 'update';
     }
+
+    get fail(): boolean {
+        return this.#fail;
+    }
+
+    set fail(value: boolean) {
+        this.#fail = value;
+        this.action = 'update';
+    }
 }
 
 const Swaps: Record<SwapsRecord['id'], SwapsRecord> = {};
 
-export { SwapsRecord, Swaps };
+type SwapsData = typeof Swaps;
+
+type SwapsRecordEntry = SwapsRecord | number;
+
+function getSwapsRecord(entry: SwapsRecordEntry): SwapsRecord {
+    if (entry instanceof SwapsRecord) {
+        return entry;
+    }
+    const swapRecord = Swaps[entry];
+    if (!swapRecord) {
+        throw new Error(`Swap with id ${entry} does not exist.`);
+    }
+    return swapRecord;
+}
+
+export { SwapsRecord, Swaps, type SwapsData, type SwapsRecordEntry, getSwapsRecord };

@@ -4,7 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
-import { AppsLink, FoldersLink, FilesLink } from '../dblinks';
+import { DbLinks } from '../DbLinks';
 
 let config: Config | null = null;
 
@@ -62,22 +62,18 @@ app.whenReady().then(async () => {
             console.debug('Processed config', config);
         }
         if (config.db) {
-            const foldersLink = new FoldersLink(config.db);
-            foldersLink.dbFetchAll().then((data) => {
+            const dataLink = new DbLinks(config.db);
+            dataLink.fetchAll().then(() => {
                 if (config!.debug) {
-                    console.debug(`Fetched ${Object.keys(data).length} folders`);
-                }
-            });
-            const appsLink = new AppsLink(config.db);
-            appsLink.dbFetchAll().then((data) => {
-                if (config!.debug) {
-                    console.debug(`Fetched ${Object.keys(data).length} apps`);
-                }
-            });
-            const filesLink = new FilesLink(config.db);
-            filesLink.dbFetchAll().then((data) => {
-                if (config!.debug) {
-                    console.debug(`Fetched ${Object.keys(data).length} files`);
+                    console.debug(
+                        `Fetched data:
+                            ${dataLink.foldersCount} folders,
+                            ${dataLink.tagsCount} tags,
+                            ${dataLink.appsCount} apps,
+                            ${dataLink.filesCount} files,
+                            ${dataLink.swapsCount} swaps,
+                            `.replace(/\t+/g, '\t')
+                    );
                 }
             });
         } else {

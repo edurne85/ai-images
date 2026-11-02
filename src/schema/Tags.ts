@@ -36,4 +36,35 @@ const TagsByTag: Record<TagsRecord['tag'], TagsRecord> = {};
 type TagsData = typeof Tags;
 type TagsByTagData = typeof TagsByTag;
 
-export { TagsRecord, Tags, TagsByTag, type TagsData, type TagsByTagData };
+type TagRecordEntry = TagsRecord | number | string;
+
+function getTagRecord(entry: TagRecordEntry): TagsRecord {
+    if (entry instanceof TagsRecord) {
+        return entry;
+    }
+    if (typeof entry === 'number') {
+        const tagRecord = Tags[entry];
+        if (!tagRecord) {
+            throw new Error(`Tag with id ${entry} does not exist.`);
+        }
+        return tagRecord;
+    }
+    if (typeof entry === 'string') {
+        const tagRecord = TagsByTag[entry];
+        if (!tagRecord) {
+            throw new Error(`Tag "${entry}" does not exist.`);
+        }
+        return tagRecord;
+    }
+    throw new Error(`Invalid tag entry: ${entry}`);
+}
+
+export {
+    TagsRecord,
+    Tags,
+    TagsByTag,
+    type TagsData,
+    type TagsByTagData,
+    type TagRecordEntry,
+    getTagRecord,
+};

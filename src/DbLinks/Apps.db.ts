@@ -1,13 +1,13 @@
-import { RecordBase, AppsRecord, Apps, type FoldersData } from '../schema';
+import { RecordBase, AppsRecord, Apps, type FoldersData, type AppsData } from '../schema';
 import { type DbLink, DbTableLinkBase } from './base';
 
 type AppsRow = {
     ID: number;
     'Display Title': string;
     'Google Play Id': string;
-    Installed: number; // 0 or 1
-    Paid: number; // 0 or 1
-    Discarded: number; // 0 or 1
+    Installed: 0 | 1;
+    Paid: 0 | 1;
+    Discarded: 0 | 1;
     'Sync Folder': Nullable<number>; // Assuming this is a foreign key to Folders table
     Notes: string | null;
 };
@@ -72,7 +72,7 @@ class AppsLink extends DbTableLinkBase<AppsRecord, AppsRow, number> {
         }
     }
 
-    safeRefresh(folders: FoldersData): Promise<Record<number, AppsRecord>> {
+    safeRefresh(folders: FoldersData): Promise<AppsData> {
         this.checkLinks(folders);
         return this.refresh();
     }

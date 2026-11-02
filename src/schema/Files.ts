@@ -1,10 +1,8 @@
 import { RecordBase, type RecordPendingAction } from './base';
 import { FoldersRecord, Folders, FoldersRecordEntry } from './Folders';
-import { TagsRecord, Tags, TagsByTag } from './Tags';
+import { TagsRecord, Tags, TagsByTag, TagRecordEntry } from './Tags';
 
-type TagEntry = TagsRecord | number | string;
-
-function getTagRecord(tag: TagEntry): TagsRecord {
+function getTagRecord(tag: TagRecordEntry): TagsRecord {
     if (tag instanceof TagsRecord) {
         return tag;
     }
@@ -31,7 +29,7 @@ type FilesRawBuilder = {
     folder: number;
     name: string;
     notes: string | null;
-    tags: TagEntry[];
+    tags: TagRecordEntry[];
 };
 
 class FilesRecord extends RecordBase {
@@ -102,7 +100,7 @@ class FilesRecord extends RecordBase {
         return [...this.#tags];
     }
 
-    addTag(tag: TagEntry): boolean {
+    addTag(tag: TagRecordEntry): boolean {
         const tagRecord = getTagRecord(tag);
         if (this.#tags.has(tagRecord)) {
             return false;
@@ -112,7 +110,7 @@ class FilesRecord extends RecordBase {
         return true;
     }
 
-    removeTag(tag: TagEntry): boolean {
+    removeTag(tag: TagRecordEntry): boolean {
         const tagRecord = getTagRecord(tag);
         if (!this.#tags.has(tagRecord)) {
             return false;
@@ -124,6 +122,8 @@ class FilesRecord extends RecordBase {
 }
 
 const Files: Record<FilesRecord['id'], FilesRecord> = {};
+
+type FilesData = typeof Files;
 
 type FilesRecordEntry = FilesRecord | number;
 
@@ -138,4 +138,4 @@ function getFilesRecord(entry: FilesRecordEntry): FilesRecord {
     return fileRecord;
 }
 
-export { FilesRecord, Files, type FilesRecordEntry, getFilesRecord };
+export { FilesRecord, Files, type FilesData, type FilesRecordEntry, getFilesRecord };

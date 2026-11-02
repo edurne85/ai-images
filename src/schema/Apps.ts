@@ -126,4 +126,19 @@ class AppsRecord extends RecordBase {
 
 const Apps: Record<AppsRawBuilder['id'], AppsRecord> = {};
 
-export { AppsRecord, Apps };
+type AppsData = typeof Apps;
+
+type AppsRecordEntry = AppsRecord | number;
+
+function getAppsRecord(entry: AppsRecordEntry): AppsRecord {
+    if (entry instanceof AppsRecord) {
+        return entry;
+    }
+    const appRecord = Apps[entry];
+    if (!appRecord) {
+        throw new Error(`App with id ${entry} does not exist.`);
+    }
+    return appRecord;
+}
+
+export { AppsRecord, Apps, type AppsData, type AppsRecordEntry, getAppsRecord };

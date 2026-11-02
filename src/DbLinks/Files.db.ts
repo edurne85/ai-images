@@ -1,6 +1,7 @@
 import { RecordBase, FilesRecord, Files, FoldersData } from '../schema';
 import { type DbLink, DbTableLinkBase } from './base';
 
+// TODO: Implement tag links!
 type FilesRow = {
     ID: number;
     Folder: number;
