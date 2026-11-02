@@ -56,6 +56,8 @@ app.whenReady().then(async () => {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'));
+
+    // Initialize config and data links
     try {
         config = await initializeConfig(rawConfig);
         if (config.debug) {
@@ -66,14 +68,13 @@ app.whenReady().then(async () => {
             dataLink.fetchAll().then(() => {
                 if (config!.debug) {
                     console.debug(
-                        `Fetched data:
-                            ${dataLink.foldersCount} folders,
-                            ${dataLink.tagsCount} tags,
-                            ${dataLink.appsCount} apps,
-                            ${dataLink.filesCount} files,
-                            ${dataLink.swapsCount} swaps,
-                            ${dataLink.fileTagsCount} file tags entries
-                            `.replace(/\t+/g, '\t')
+                        'Fetched data:\n',
+                            `\t${dataLink.foldersCount} folders,\n`,
+                            `\t${dataLink.tagsCount} tags,\n`,
+                            `\t${dataLink.appsCount} apps,\n`,
+                            `\t${dataLink.filesCount} files,\n`,
+                            `\t${dataLink.swapsCount} swaps,\n`,
+                            `\t${dataLink.fileTagsCount} file tags entries`
                     );
                 }
             });
