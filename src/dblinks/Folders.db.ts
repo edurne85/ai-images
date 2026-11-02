@@ -1,5 +1,5 @@
-import { FoldersRecord, Folders } from './Folders';
-import { type DbLink, DbTableLinkBase } from './dbBase';
+import { FoldersRecord, Folders } from '../schema/Folders';
+import { type DbLink, DbTableLinkBase } from './base';
 
 type FoldersRow = {
     ID: number;

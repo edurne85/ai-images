@@ -4,8 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
-import { FoldersLink } from '../schema/Folders.db';
-import { AppsLink } from '../schema/Apps.db';
+import { FoldersLink } from '../dblinks/Folders.db';
+import { AppsLink } from '../dblinks/Apps.db';
 
 let config: Config | null = null;
 

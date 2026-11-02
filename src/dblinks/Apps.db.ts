@@ -1,7 +1,7 @@
-import { AppsRecord, Apps } from './Apps';
-import { RecordBase } from './base';
-import { type DbLink, DbTableLinkBase } from './dbBase';
-import { type Folders } from './Folders';
+import { AppsRecord, Apps } from '../schema/Apps';
+import { RecordBase } from '../schema/base';
+import { type DbLink, DbTableLinkBase } from './base';
+import { type Folders } from '../schema/Folders';
 
 type FoldersData = typeof Folders;
 

@@ -1,4 +1,4 @@
-import { RecordBase, clearRecords } from './base';
+import { RecordBase, clearRecords } from '../schema/base';
 import { type open } from 'sqlite';
 
 type DbLink = Awaited<ReturnType<typeof open>>;
