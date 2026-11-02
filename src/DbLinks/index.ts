@@ -4,6 +4,7 @@ export { type FilesRow, FilesLink } from './Files.db';
 export { type FoldersRow, FoldersLink } from './Folders.db';
 export { type SwapsRow, SwapsLink } from './Swaps.db';
 export { type TagsRow, TagsLink } from './Tags.db';
+export { type SourceFileTagsRow, SourceFileTagsLink } from './SourceFileTags.db';
 
 import { type DbLink } from './base';
 import { AppsLink } from './Apps.db';
@@ -11,20 +12,25 @@ import { FoldersLink } from './Folders.db';
 import { FilesLink } from './Files.db';
 import { SwapsLink } from './Swaps.db';
 import { TagsLink } from './Tags.db';
+import { SourceFileTagsLink } from './SourceFileTags.db';
 
 class DbLinks {
+    #dblink: DbLink;
     #apps: AppsLink;
     #folders: FoldersLink;
     #files: FilesLink;
     #swaps: SwapsLink;
     #tags: TagsLink;
+    #sourceFileTags: SourceFileTagsLink;
 
     constructor(dbLink: DbLink) {
+        this.#dblink = dbLink;
         this.#folders = new FoldersLink(dbLink);
         this.#tags = new TagsLink(dbLink);
         this.#apps = new AppsLink(dbLink);
         this.#files = new FilesLink(dbLink);
         this.#swaps = new SwapsLink(dbLink);
+        this.#sourceFileTags = new SourceFileTagsLink(dbLink, this.#files, this.#tags);
     }
 
     async fetchAll(): Promise<void> {
@@ -41,6 +47,10 @@ class DbLinks {
         await this.#apps.safeRefresh(this.#folders.data);
         await this.#files.safeRefresh(this.#folders.data);
         await this.#swaps.safeRefresh(this.#files.data);
+    }
+
+    get dbLink(): DbLink {
+        return this.#dblink;
     }
 
     get apps(): AppsLink {
@@ -81,6 +91,14 @@ class DbLinks {
 
     get tagsCount(): number {
         return Object.keys(this.#tags.data).length;
+    }
+
+    get fileTags(): SourceFileTagsLink {
+        return this.#sourceFileTags;
+    }
+
+    get fileTagsCount(): number {
+        return this.#sourceFileTags.count;
     }
 }
 

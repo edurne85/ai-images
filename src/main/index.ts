@@ -72,6 +72,7 @@ app.whenReady().then(async () => {
                             ${dataLink.appsCount} apps,
                             ${dataLink.filesCount} files,
                             ${dataLink.swapsCount} swaps,
+                            ${dataLink.fileTagsCount} file tags entries
                             `.replace(/\t+/g, '\t')
                     );
                 }

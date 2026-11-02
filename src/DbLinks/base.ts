@@ -77,6 +77,10 @@ abstract class DbTableLinkBase<T extends RecordBase, Row, K extends Key = Key> {
         return this.#data[key] ?? this.dbFetchEntry(key);
     }
 
+    checkKeyExists(key: K): boolean {
+        return key in this.#data;
+    }
+
     // Subclasses should expose a method that checks any foreign constraints before calling this.
     protected refresh(): Promise<Record<K, T>> {
         this.applyUpdates();
