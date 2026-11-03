@@ -5,7 +5,7 @@ import icon from '../../resources/icon.png?asset';
 import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
 import { DbLinks } from '../DbLinks';
-import { registerDbApiHandlers } from './dbApi';
+import { registerApiHandlers } from './api';
 
 let config: Config | null = null;
 
@@ -79,7 +79,7 @@ app.whenReady().then(async () => {
                     );
                 }
             });
-            registerDbApiHandlers(dataLink);
+            registerApiHandlers({ dataLink });
         } else {
             console.warn('No database connection available');
         }

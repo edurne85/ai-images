@@ -9,7 +9,7 @@
  */
 
 import fs from 'node:fs';
-import { type PathMapperKey } from './pathMappers';
+import { type PathMapperKey } from './filesystem';
 
 enum Environment {
     win = 'win',

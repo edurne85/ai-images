@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-import { type PathMapper, pathMappers } from './pathMappers';
+import { type PathMapper, pathMappers } from './filesystem';
 import { getRunningEnvironment, pickMapper, type Environments } from './Environment';
 
 type RawConfig = Environments & {
