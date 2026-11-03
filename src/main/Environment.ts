@@ -19,12 +19,12 @@ enum Environment {
 type OptionalEnvironment = Environment | undefined;
 
 type Environments = {
-    sourcesEnvironment?: OptionalEnvironment;
-    dbEnvironment?: OptionalEnvironment;
-    defaultEnvironment?: OptionalEnvironment;
+    sourcesEnvironment?: Environment;
+    dbEnvironment?: Environment;
+    defaultEnvironment?: Environment;
 };
 
-function getRunningEnvironment(): OptionalEnvironment | undefined {
+function getRunningEnvironment(): OptionalEnvironment {
     if (process.platform === 'win32') {
         return Environment.win;
     } else if (process.platform === 'linux') {
