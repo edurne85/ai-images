@@ -1,6 +1,12 @@
 import { ipcMain } from 'electron';
 import { DbLinks } from '../DbLinks';
-import { type FoldersData, type TagsData, type AppsData, type FilesData, type SwapsData } from '../schema';
+import {
+    type FoldersData,
+    type TagsData,
+    type AppsData,
+    type FilesData,
+    type SwapsData,
+} from '../schema';
 
 function registerDbApiHandlers(dataLink: DbLinks): void {
     ipcMain.handle('db:get:folders', async (): Promise<FoldersData> => dataLink.folders.data);
