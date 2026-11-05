@@ -1,10 +1,11 @@
 {
     "name": "ai-images",
-    "version": "1.0.0",
+    "version": "0.0.1",
+    "license": "MIT",
     "description": "An Electron application with React and TypeScript",
     "main": "./out/main/index.js",
-    "author": "example.com",
-    "homepage": "https://electron-vite.org",
+    "author": "Edurne Pascual Sáez",
+    "homepage": "https://github.com/edurne85/ai-images",
     "scripts": {
         "format": "prettier --write .",
         "format:check": "prettier --check .",
