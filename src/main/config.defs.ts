@@ -1,13 +1,14 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { type PathMapper, pathMappers } from './filesystem';
-import { getRunningEnvironment, pickMapper, type Environments } from './Environment';
+import { Environment, getRunningEnvironment, pickMapper, type Environments } from './Environment';
 
 type RawConfig = Environments & {
     debug?: boolean;
     silent?: boolean;
     sourcesPathPrefix: string;
     dbPath: string;
+    dffPath?: Nullable<string>;
 };
 
 type CleanRawConfig = Environments & Required<Omit<RawConfig, keyof Environments>>;
@@ -15,6 +16,7 @@ type CleanRawConfig = Environments & Required<Omit<RawConfig, keyof Environments
 type Config = CleanRawConfig & {
     sourcesPathMapper: PathMapper;
     dbPathMapper: PathMapper;
+    dffMappedPath: Nullable<string>;
     db: Awaited<ReturnType<typeof open>> | null;
     runningEnvironment: ReturnType<typeof getRunningEnvironment>;
 };
@@ -28,6 +30,9 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
     const runningEnvironment = getRunningEnvironment();
     const sourcesPathMapper = pathMappers[pickMapper(runningEnvironment, sourcesEnvironment)];
     const dbPathMapper = pathMappers[pickMapper(runningEnvironment, dbEnvironment)];
+    const dffPathMapper = pathMappers[pickMapper(runningEnvironment, Environment.win)];
+    const dffPath = rawConfig.dffPath ?? null;
+    const dffMappedPath = dffPath ? dffPathMapper(dffPath) : null;
     // Establish DB connection:
     let db: Awaited<ReturnType<typeof open>> | null = null;
     const dbFile = dbPathMapper(rawConfig.dbPath);
@@ -54,12 +59,14 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
         ...rawConfig,
         debug,
         silent,
+        dffPath,
         // Additional / computed values:
         sourcesEnvironment,
         dbEnvironment,
         runningEnvironment,
         sourcesPathMapper,
         dbPathMapper,
+        dffMappedPath,
         db,
     };
 }
