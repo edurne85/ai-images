@@ -6,6 +6,7 @@ import { Environment, getRunningEnvironment, pickMapper, type Environments } fro
 type RawConfig = Environments & {
     debug?: boolean;
     silent?: boolean;
+    autoDeleteDuplicates?: boolean;
     sourcesPathPrefix: string;
     dbPath: string;
     dffPath?: Nullable<string>;
@@ -25,6 +26,7 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
     // Initialize optional values:
     const debug = rawConfig.debug ?? false;
     const silent = rawConfig.silent ?? !debug;
+    const autoDeleteDuplicates = rawConfig.autoDeleteDuplicates ?? false;
     const sourcesEnvironment = rawConfig.sourcesEnvironment ?? rawConfig.defaultEnvironment;
     const dbEnvironment = rawConfig.dbEnvironment ?? rawConfig.defaultEnvironment;
     const runningEnvironment = getRunningEnvironment();
@@ -59,6 +61,7 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
         ...rawConfig,
         debug,
         silent,
+        autoDeleteDuplicates,
         dffPath,
         // Additional / computed values:
         sourcesEnvironment,

@@ -6,6 +6,7 @@ import { type Config, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
 import { DbLinks } from '../DbLinks';
 import { registerApiHandlers } from './api';
+import { deleteAllDuplicates } from './filesystem/dff/deleteDuplicates';
 
 let config: Config | null = null;
 
@@ -79,9 +80,15 @@ app.whenReady().then(async () => {
                     );
                 }
             });
-            registerApiHandlers({ dataLink });
+            registerApiHandlers({ config });
         } else {
             console.warn('No database connection available');
+        }
+        if (config.autoDeleteDuplicates) {
+            const deleted = deleteAllDuplicates(config);
+            if (!config.silent && deleted > 0) {
+                console.info(`Deleted ${deleted} duplicates`);
+            }
         }
     } catch (error) {
         console.error('Failed to initialize config', error);

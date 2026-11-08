@@ -8,9 +8,13 @@ type DffEntryBuilder = {
 };
 
 /* Exmaple first line:
+    Obsolete (GUI / file only)
     - 2 equal files of size 2251639
+    /^\s*-\s+(\d+)\s+equal files of size\s+(\d+)\s*$/;
+    Current (CLI mode)
+    - Equal (3 files of size 10904006):
 */
-const firstLineRegexp = /^\s*-\s+(\d+)\s+equal files of size\s+(\d+)\s*$/;
+const firstLineRegexp = /^\s*- Equal \((\d+)\s+files of size\s+(\d+)\):\s*$/;
 
 function preTrim(str: string): string {
     const spaceTrimmed = str.trim();
