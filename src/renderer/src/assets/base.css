@@ -31,7 +31,7 @@
     --color-text: var(--ev-c-text-1);
     --color-link: #244566;
     --color-link-active: #607329;
-    --color-link-hover: #24663A;
+    --color-link-hover: #24663a;
 }
 
 a:hover {
