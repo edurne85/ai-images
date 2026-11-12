@@ -19,7 +19,7 @@ function registerDbApiHandlers(dataLink: DbLinks): void {
         event.returnValue = { ...dataLink.apps.data };
     });
     ipcMain.on('db:get:files', async (event: IpcMainEvent): Promise<void> => {
-        event.returnValue = serializeObjects(dataLink.files.data);;
+        event.returnValue = serializeObjects(dataLink.files.data);
     });
     ipcMain.on('db:update:files', async (event: IpcMainEvent, files: FilesData): Promise<void> => {
         // TODO: Refactor to take FilesRawBuilder[] param

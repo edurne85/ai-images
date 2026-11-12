@@ -33,7 +33,9 @@ function rebuildObjects<K extends string | number | symbol, Builder, Class>(
     );
 }
 
-abstract class RecordBase<K extends string | number | symbol = number> implements Serializable<RecordBaseBuilder> {
+abstract class RecordBase<
+    K extends string | number | symbol = number,
+> implements Serializable<RecordBaseBuilder> {
     #action: RecordPendingAction;
 
     protected constructor({ action = 'none' }: RecordBaseBuilder) {

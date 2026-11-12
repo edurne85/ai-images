@@ -16,9 +16,6 @@
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
-      ],
-      "@schema/*": [
-        "src/schema/*"
       ]
     }
   }

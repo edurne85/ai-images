@@ -1,6 +1,7 @@
 // docs: https://reactdatagrid.dev/demo/standard
 import { DataGrid, type Column, type Row } from 'react-open-source-grid';
-import * as $schema from '../../../schema';
+import { DbContext, type FoldersTableEntries } from '@renderer/providers/DbProvider';
+import { useContext } from 'react';
 
 const baseColumn: Partial<Column> = {
     pinnable: false,
@@ -13,32 +14,33 @@ const boolColumn: Partial<Column> = {
     sortable: false,
 };
 
-const folderColumn: Partial<Column> = {
-    ...baseColumn,
-    sortable: false,
-    valueFormatter: (value: number | null): string => {
-        if (value === null) {
-            return '';
-        }
-        return $schema.Folders[value]?.name ?? `ERR (id: ${value})`;
-    },
-};
-
-const columns: Column[] = [
-    // { field: 'id', headerName: 'ID', hide: true },
-    { field: 'title', headerName: 'App Title', ...baseColumn },
-    { field: 'playId', headerName: 'Google Play ID', ...baseColumn },
-    { field: 'installed', headerName: 'Installed', ...boolColumn },
-    { field: 'paid', headerName: 'Paid', ...boolColumn },
-    { field: 'discarded', headerName: 'Discarded', ...boolColumn },
-    { field: 'syncFolder', headerName: 'Sync Folder', ...folderColumn },
-    { field: 'notes', headerName: 'Notes', ...baseColumn },
-];
+function folderColumn(folders: FoldersTableEntries): Partial<Column> {
+    return {
+        ...baseColumn,
+        sortable: false,
+        valueFormatter: (value: number | null): string => {
+            if (value === null) {
+                return '';
+            }
+            return folders.parsed[value]?.name ?? `ERR (id: ${value})`;
+        },
+    };
+}
 function AppsGrid(): React.JSX.Element {
-    if (Object.keys($schema.Folders)) {
-        window.api.db.getFolders();
-    }
-    const rows = window.api.db.getApps() as Row[];
+    const dbContext = useContext(DbContext);
+
+    const columns: Column[] = [
+        // { field: 'id', headerName: 'ID', hide: true },
+        { field: 'title', headerName: 'App Title', ...baseColumn },
+        { field: 'playId', headerName: 'Google Play ID', ...baseColumn },
+        { field: 'installed', headerName: 'Installed', ...boolColumn },
+        { field: 'paid', headerName: 'Paid', ...boolColumn },
+        { field: 'discarded', headerName: 'Discarded', ...boolColumn },
+        { field: 'syncFolder', headerName: 'Sync Folder', ...folderColumn(dbContext.folders) },
+        { field: 'notes', headerName: 'Notes', ...baseColumn },
+    ];
+
+    const rows = Object.values(dbContext.apps.raw) as Row[];
     return <DataGrid rows={rows} columns={columns} />;
 }
 
