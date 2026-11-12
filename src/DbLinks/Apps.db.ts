@@ -24,8 +24,8 @@ class AppsLink extends DbTableLinkBase<AppsRecord, AppsRow, number> {
         return new AppsRecord({
             action: 'none',
             id: row['ID'],
-            title: row['Display Title'],
-            playId: row['Google Play Id'],
+            title: row['Display title'],
+            playId: row['Google Play id'],
             installed: !!row['Installed'],
             paid: !!row['Paid'],
             discarded: !!row['Discarded'],
