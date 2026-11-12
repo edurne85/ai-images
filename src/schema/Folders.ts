@@ -7,7 +7,7 @@ type FoldersRawBuilder = RecordBaseBuilder & {
     notes: string | null;
 };
 
-class FoldersRecord extends RecordBase implements Serializable<FoldersRawBuilder> {
+class FoldersRecord extends RecordBase<number> implements Serializable<FoldersRawBuilder> {
     #id: number;
     #name: string;
     #sync: boolean;
@@ -50,6 +50,10 @@ class FoldersRecord extends RecordBase implements Serializable<FoldersRawBuilder
     set notes(value: string | null) {
         this.#notes = value;
         this.action = 'update';
+    }
+
+    get $key(): number {
+        return this.#id;
     }
 
     get $serialized(): FoldersRawBuilder {

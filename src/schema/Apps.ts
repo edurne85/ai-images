@@ -122,6 +122,10 @@ class AppsRecord extends RecordBase implements Serializable<AppsRawBuilder> {
         this.action = 'update';
     }
 
+    get $key(): number {
+        return this.#id;
+    }
+
     get $serialized(): AppsRawBuilder {
         return {
             ...super.$serialized,

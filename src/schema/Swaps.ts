@@ -1,4 +1,4 @@
-import { RecordBase, type RecordBaseBuilder } from './base';
+import { RecordBase, type Serializable, type RecordBaseBuilder } from './base';
 import { FilesRecord, type FilesRecordEntry, getFilesRecord } from './Files';
 
 type SwapsRawBuilder = RecordBaseBuilder & {
@@ -9,7 +9,7 @@ type SwapsRawBuilder = RecordBaseBuilder & {
     fail?: boolean;
 };
 
-class SwapsRecord extends RecordBase {
+class SwapsRecord extends RecordBase implements Serializable<SwapsRawBuilder> {
     #id: number;
     #source: FilesRecord;
     #date: SqlSimpleDate;
@@ -82,6 +82,21 @@ class SwapsRecord extends RecordBase {
     set fail(value: boolean) {
         this.#fail = value;
         this.action = 'update';
+    }
+
+    get $key(): number {
+        return this.#id;
+    }
+
+    get $serialized(): SwapsRawBuilder {
+        return {
+            ...super.$serialized,
+            id: this.#id,
+            source: this.#source.$key,
+            date: this.#date,
+            output: this.#output,
+            fail: this.#fail,
+        };
     }
 }
 

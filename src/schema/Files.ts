@@ -1,4 +1,4 @@
-import { RecordBase, type RecordBaseBuilder } from './base';
+import { RecordBase, type Serializable, type RecordBaseBuilder } from './base';
 import { FoldersRecord, Folders, FoldersRecordEntry } from './Folders';
 import { TagsRecord, Tags, TagsByTag, TagRecordEntry } from './Tags';
 
@@ -31,7 +31,7 @@ type FilesRawBuilder = RecordBaseBuilder & {
     tags: TagRecordEntry[];
 };
 
-class FilesRecord extends RecordBase {
+class FilesRecord extends RecordBase implements Serializable<FilesRawBuilder> {
     #id: number;
     #folder: number;
     #name: string;
@@ -117,6 +117,21 @@ class FilesRecord extends RecordBase {
         this.#tags.delete(tagRecord);
         this.action = 'update';
         return true;
+    }
+
+    get $key(): number {
+        return this.#id;
+    }
+
+    get $serialized(): FilesRawBuilder {
+        return {
+            ...super.$serialized,
+            id: this.#id,
+            folder: this.#folder,
+            name: this.#name,
+            notes: this.#notes,
+            tags: Array.from(this.#tags).map((tag) => tag.id),
+        };
     }
 }
 

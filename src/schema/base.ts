@@ -33,7 +33,7 @@ function rebuildObjects<K extends string | number | symbol, Builder, Class>(
     );
 }
 
-abstract class RecordBase implements Serializable<RecordBaseBuilder> {
+abstract class RecordBase<K extends string | number | symbol = number> implements Serializable<RecordBaseBuilder> {
     #action: RecordPendingAction;
 
     protected constructor({ action = 'none' }: RecordBaseBuilder) {
@@ -63,6 +63,8 @@ abstract class RecordBase implements Serializable<RecordBaseBuilder> {
             this.#action = 'none';
         }
     }
+
+    abstract get $key(): K;
 
     get $serialized(): RecordBaseBuilder {
         return {

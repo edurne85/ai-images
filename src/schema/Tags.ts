@@ -1,11 +1,11 @@
-import { RecordBase, type RecordBaseBuilder } from './base';
+import { RecordBase, type Serializable, type RecordBaseBuilder } from './base';
 
 type TagsRawBuilder = RecordBaseBuilder & {
     id: number;
     tag: string;
 };
 
-class TagsRecord extends RecordBase {
+class TagsRecord extends RecordBase implements Serializable<TagsRawBuilder> {
     #id: number;
     #tag: string;
 
@@ -26,6 +26,18 @@ class TagsRecord extends RecordBase {
     set tag(value: string) {
         this.#tag = value;
         this.action = 'update';
+    }
+
+    get $key(): number {
+        return this.#id;
+    }
+
+    get $serialized(): TagsRawBuilder {
+        return {
+            ...super.$serialized,
+            id: this.#id,
+            tag: this.#tag,
+        };
     }
 }
 
