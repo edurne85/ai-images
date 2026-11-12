@@ -1,8 +1,7 @@
-import { RecordBase, type RecordPendingAction } from './base';
+import { RecordBase, type Serializable, type RecordBaseBuilder } from './base';
 import { FoldersRecord, type FoldersRecordEntry, getFoldersRecord } from './Folders';
 
-type AppsRawBuilder = {
-    action: RecordPendingAction;
+type AppsRawBuilder = RecordBaseBuilder & {
     id: number;
     title: string;
     playId: string;
@@ -13,7 +12,7 @@ type AppsRawBuilder = {
     notes: string | null;
 };
 
-class AppsRecord extends RecordBase {
+class AppsRecord extends RecordBase implements Serializable<AppsRawBuilder> {
     #id: number;
     #title: string;
     #playId: string;
@@ -24,7 +23,6 @@ class AppsRecord extends RecordBase {
     #notes: string | null;
 
     constructor({
-        action = 'none',
         id,
         title,
         playId,
@@ -33,8 +31,9 @@ class AppsRecord extends RecordBase {
         discarded = false,
         syncFolder = null,
         notes = null,
+        ...rest
     }: AppsRawBuilder) {
-        super(action);
+        super(rest);
         this.#id = id;
         this.#title = title;
         this.#playId = playId;
@@ -122,6 +121,20 @@ class AppsRecord extends RecordBase {
         this.#notes = value;
         this.action = 'update';
     }
+
+    get $serialized(): AppsRawBuilder {
+        return {
+            ...super.$serialized,
+            id: this.#id,
+            title: this.#title,
+            playId: this.#playId,
+            installed: this.#installed,
+            paid: this.#paid,
+            discarded: this.#discarded,
+            syncFolder: this.#syncFolder?.id || null,
+            notes: this.#notes,
+        };
+    }
 }
 
 const Apps: Record<AppsRawBuilder['id'], AppsRecord> = {};
@@ -141,4 +154,11 @@ function getAppsRecord(entry: AppsRecordEntry): AppsRecord {
     return appRecord;
 }
 
-export { AppsRecord, Apps, type AppsData, type AppsRecordEntry, getAppsRecord };
+export {
+    type AppsRawBuilder,
+    AppsRecord,
+    Apps,
+    type AppsData,
+    type AppsRecordEntry,
+    getAppsRecord,
+};

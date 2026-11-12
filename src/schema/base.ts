@@ -1,9 +1,42 @@
 type RecordPendingAction = 'wait' | 'none' | 'delete' | 'insert' | 'update' | 'invalid';
 
-abstract class RecordBase {
+interface Serializable<T> {
+    get $serialized(): T;
+}
+
+type RecordBaseBuilder = {
+    action: RecordPendingAction;
+};
+
+function serializeObjects<K extends string | number | symbol, Raw>(
+    source: Record<K, Serializable<Raw>>
+): Record<K, Raw> {
+    return Object.keys(source).reduce(
+        (acc, key) => {
+            acc[key] = source[key].$serialized;
+            return acc;
+        },
+        {} as Record<K, Raw>
+    );
+}
+
+function rebuildObjects<K extends string | number | symbol, Builder, Class>(
+    raw: Record<K, Builder>,
+    ctor: new (props: Builder) => Class
+): Record<K, Class> {
+    return Object.keys(raw).reduce(
+        (acc, key) => {
+            acc[key] = new ctor(raw[key]);
+            return acc;
+        },
+        {} as Record<K, Class>
+    );
+}
+
+abstract class RecordBase implements Serializable<RecordBaseBuilder> {
     #action: RecordPendingAction;
 
-    protected constructor(action: RecordPendingAction) {
+    protected constructor({ action = 'none' }: RecordBaseBuilder) {
         this.#action = action;
     }
 
@@ -30,6 +63,12 @@ abstract class RecordBase {
             this.#action = 'none';
         }
     }
+
+    get $serialized(): RecordBaseBuilder {
+        return {
+            action: this.#action,
+        };
+    }
 }
 
 function clearRecords<T extends string | number | symbol, R>(records: Record<T, R>): void {
@@ -40,4 +79,12 @@ function clearRecords<T extends string | number | symbol, R>(records: Record<T, 
     }
 }
 
-export { type RecordPendingAction, RecordBase, clearRecords };
+export {
+    type RecordPendingAction,
+    type Serializable,
+    type RecordBaseBuilder,
+    serializeObjects,
+    rebuildObjects,
+    RecordBase,
+    clearRecords,
+};

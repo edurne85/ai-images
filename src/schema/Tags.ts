@@ -1,7 +1,6 @@
-import { RecordBase, type RecordPendingAction } from './base';
+import { RecordBase, type RecordBaseBuilder } from './base';
 
-type TagsRawBuilder = {
-    action: RecordPendingAction;
+type TagsRawBuilder = RecordBaseBuilder & {
     id: number;
     tag: string;
 };
@@ -10,8 +9,8 @@ class TagsRecord extends RecordBase {
     #id: number;
     #tag: string;
 
-    constructor({ action = 'none', id, tag }: TagsRawBuilder) {
-        super(action);
+    constructor({ id, tag, ...rest }: TagsRawBuilder) {
+        super(rest);
         this.#id = id;
         this.#tag = tag;
     }
@@ -60,6 +59,7 @@ function getTagRecord(entry: TagRecordEntry): TagsRecord {
 }
 
 export {
+    type TagsRawBuilder,
     TagsRecord,
     Tags,
     TagsByTag,

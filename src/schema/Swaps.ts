@@ -1,8 +1,7 @@
-import { RecordBase, type RecordPendingAction } from './base';
+import { RecordBase, type RecordBaseBuilder } from './base';
 import { FilesRecord, type FilesRecordEntry, getFilesRecord } from './Files';
 
-type SwapsRawBuilder = {
-    action: RecordPendingAction;
+type SwapsRawBuilder = RecordBaseBuilder & {
     id: number;
     source: FilesRecordEntry;
     date: SqlSimpleDate;
@@ -17,8 +16,8 @@ class SwapsRecord extends RecordBase {
     #output: string;
     #fail: boolean;
 
-    constructor({ action = 'none', id, source, date, output, fail = false }: SwapsRawBuilder) {
-        super(action);
+    constructor({ id, source, date, output, fail = false, ...rest }: SwapsRawBuilder) {
+        super(rest);
         this.#id = id;
         this.#source = getFilesRecord(source);
         this.#date = date;
@@ -103,4 +102,11 @@ function getSwapsRecord(entry: SwapsRecordEntry): SwapsRecord {
     return swapRecord;
 }
 
-export { SwapsRecord, Swaps, type SwapsData, type SwapsRecordEntry, getSwapsRecord };
+export {
+    type SwapsRawBuilder,
+    SwapsRecord,
+    Swaps,
+    type SwapsData,
+    type SwapsRecordEntry,
+    getSwapsRecord,
+};

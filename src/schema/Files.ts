@@ -1,4 +1,4 @@
-import { RecordBase, type RecordPendingAction } from './base';
+import { RecordBase, type RecordBaseBuilder } from './base';
 import { FoldersRecord, Folders, FoldersRecordEntry } from './Folders';
 import { TagsRecord, Tags, TagsByTag, TagRecordEntry } from './Tags';
 
@@ -23,8 +23,7 @@ function getTagRecord(tag: TagRecordEntry): TagsRecord {
     throw new Error(`Invalid tag entry: ${tag}`);
 }
 
-type FilesRawBuilder = {
-    action: RecordPendingAction;
+type FilesRawBuilder = RecordBaseBuilder & {
     id: number;
     folder: number;
     name: string;
@@ -39,8 +38,8 @@ class FilesRecord extends RecordBase {
     #notes: string | null;
     #tags: Set<TagsRecord>;
 
-    constructor({ action = 'none', id, folder, name, notes = null, tags = [] }: FilesRawBuilder) {
-        super(action);
+    constructor({ id, folder, name, notes = null, tags = [], ...rest }: FilesRawBuilder) {
+        super(rest);
         this.#id = id;
         this.#folder = folder;
         this.#name = name;
@@ -138,4 +137,11 @@ function getFilesRecord(entry: FilesRecordEntry): FilesRecord {
     return fileRecord;
 }
 
-export { FilesRecord, Files, type FilesData, type FilesRecordEntry, getFilesRecord };
+export {
+    type FilesRawBuilder,
+    FilesRecord,
+    Files,
+    type FilesData,
+    type FilesRecordEntry,
+    getFilesRecord,
+};

@@ -1,21 +1,20 @@
-import { RecordBase, type RecordPendingAction } from './base';
+import { RecordBase, Serializable, type RecordBaseBuilder } from './base';
 
-type FoldersRawBuilder = {
-    action: RecordPendingAction;
+type FoldersRawBuilder = RecordBaseBuilder & {
     id: number;
     name: string;
     sync: boolean;
     notes: string | null;
 };
 
-class FoldersRecord extends RecordBase {
+class FoldersRecord extends RecordBase implements Serializable<FoldersRawBuilder> {
     #id: number;
     #name: string;
     #sync: boolean;
     #notes: string | null;
 
-    constructor({ action = 'none', id, name, sync = false, notes = null }: FoldersRawBuilder) {
-        super(action);
+    constructor({ id, name, sync = false, notes = null, ...rest }: FoldersRawBuilder) {
+        super(rest);
         this.#id = id;
         this.#name = name;
         this.#sync = sync;
@@ -52,6 +51,16 @@ class FoldersRecord extends RecordBase {
         this.#notes = value;
         this.action = 'update';
     }
+
+    get $serialized(): FoldersRawBuilder {
+        return {
+            ...super.$serialized,
+            id: this.#id,
+            name: this.#name,
+            sync: this.#sync,
+            notes: this.#notes,
+        };
+    }
 }
 
 const Folders: Record<FoldersRawBuilder['id'], FoldersRecord> = {};
@@ -71,4 +80,11 @@ function getFoldersRecord(entry: FoldersRecordEntry): FoldersRecord {
     return folderRecord;
 }
 
-export { FoldersRecord, Folders, type FoldersData, type FoldersRecordEntry, getFoldersRecord };
+export {
+    type FoldersRawBuilder,
+    FoldersRecord,
+    Folders,
+    type FoldersData,
+    type FoldersRecordEntry,
+    getFoldersRecord,
+};
