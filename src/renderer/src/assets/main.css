@@ -1,13 +1,5 @@
 @import './base.css';
 
-body {
-    display: flex;
-    overflow: hidden;
-    background-image: url('./wavy-lines.svg');
-    background-size: cover;
-    user-select: none;
-}
-
 code {
     font-weight: 600;
     padding: 3px 5px;

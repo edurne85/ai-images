@@ -1,6 +1,7 @@
 import { type RouteObject } from 'react-router-dom';
-import { homeRoutes } from './Home';
 import { WithMenu } from '@renderer/components/Menu';
+import { homeRoutes } from './Home';
+import { appsRoutes } from './Apps';
 
 function addMenu(...routes: RouteObject[]): RouteObject[] {
     return routes.map((route) => {
@@ -15,7 +16,7 @@ function addMenu(...routes: RouteObject[]): RouteObject[] {
 }
 
 function getRoutes(): RouteObject[] {
-    return addMenu(...homeRoutes());
+    return addMenu(...homeRoutes(), ...appsRoutes());
 }
 
 export { getRoutes };

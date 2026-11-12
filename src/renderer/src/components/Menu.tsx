@@ -18,14 +18,16 @@ const MenuWrapper = styled.div`
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    &, a, a:visited {
-        color: #A2ECFB;
+    &,
+    a,
+    a:visited {
+        color: #a2ecfb;
     }
     a:active {
-        color: #ECFBA2;
+        color: #ecfba2;
     }
     a:hover {
-        color: #A2FBEC;
+        color: #a2fbec;
     }
 `;
 
@@ -35,7 +37,9 @@ function Menu(): React.JSX.Element {
             <Link to="/">
                 <HomeIcon />
             </Link>
-            <AppsIcon />
+            <Link to="/apps">
+                <AppsIcon />
+            </Link>
             <SourceIcon />
             <ImageIcon />
             <PhotoLibraryIcon />

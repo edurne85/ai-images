@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router-dom';
-import { TemplateHome } from '../components/TemplateHome';
+import { TemplateHome } from '@renderer/components/TemplateHome';
 
 function homeRoutes(): RouteObject[] {
     return [
