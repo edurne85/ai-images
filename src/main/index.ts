@@ -13,8 +13,8 @@ let config: Config | null = null;
 function createWindow(): void {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 900,
-        height: 670,
+        width: 1400,
+        height: 800,
         show: false,
         autoHideMenuBar: !config?.debug,
         ...(process.platform === 'linux' ? { icon } : {}),

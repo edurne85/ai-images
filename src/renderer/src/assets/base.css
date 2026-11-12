@@ -11,9 +11,9 @@
     --ev-c-gray-2: #414853;
     --ev-c-gray-3: #32363f;
 
-    --ev-c-text-1: rgba(255, 255, 245, 0.86);
-    --ev-c-text-2: rgba(235, 235, 245, 0.6);
-    --ev-c-text-3: rgba(235, 235, 245, 0.38);
+    --ev-c-text-1: rgba(0, 0, 10, 1);
+    --ev-c-text-2: rgba(20, 20, 10, 0.7);
+    --ev-c-text-3: rgba(20, 20, 10, 0.45);
 
     --ev-button-alt-border: transparent;
     --ev-button-alt-text: var(--ev-c-text-1);
@@ -24,11 +24,24 @@
 }
 
 :root {
-    --color-background: var(--ev-c-black);
-    --color-background-soft: var(--ev-c-black-soft);
-    --color-background-mute: var(--ev-c-black-mute);
+    --color-background: var(--ev-c-white);
+    --color-background-soft: var(--ev-c-white-soft);
+    --color-background-mute: var(--ev-c-white-mute);
 
     --color-text: var(--ev-c-text-1);
+    --color-link: #244566;
+    --color-link-active: #607329;
+    --color-link-hover: #24663A;
+}
+
+a:hover {
+    color: var(--color-link-hover);
+}
+
+:root {
+    --grid-bg: var(--color-background);
+    --grid-border: var(--ev-c-black-soft);
+    --grid-border-alt: var(--ev-c-black-mute);
 }
 
 *,
@@ -39,15 +52,9 @@
     font-weight: normal;
 }
 
-ul {
-    list-style: none;
-}
-
 body {
-    min-height: 100vh;
     color: var(--color-text);
     background: var(--color-background);
-    line-height: 1.6;
     font-family:
         Inter,
         -apple-system,
@@ -67,4 +74,40 @@ body {
     display: flex;
     overflow: hidden;
     user-select: none;
+    flex: 1;
+    height: 100vh;
+}
+
+code {
+    font-weight: 600;
+    padding: 3px 5px;
+    border-radius: 2px;
+    background-color: var(--color-background-mute);
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        SF Mono,
+        Menlo,
+        Consolas,
+        Liberation Mono,
+        monospace;
+    font-size: 85%;
+}
+
+a,
+a:visited {
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+a:active {
+    color: var(--color-link-active);
+}
+
+#root {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex: 1;
+    height: 100vh;
 }

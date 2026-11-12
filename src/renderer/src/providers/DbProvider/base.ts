@@ -1,4 +1,4 @@
-import { type RecordBase, type RecordBaseBuilder, clearRecords } from "../../../../schema";
+import { type RecordBase, type RecordBaseBuilder, clearRecords } from '../../../../schema';
 
 type Replacer<Class extends RecordBase, Key extends number | string | symbol = number> = (
     newCache: Record<Key, Class>
@@ -47,10 +47,9 @@ abstract class DbTableEntries<
     }
 }
 
-function objectReplacer<
-    Class extends RecordBase,
-    Key extends number | string | symbol = number,
->(target: Record<Key, Class>): Replacer<Class, Key> {
+function objectReplacer<Class extends RecordBase, Key extends number | string | symbol = number>(
+    target: Record<Key, Class>
+): Replacer<Class, Key> {
     return function (newCache: Record<Key, Class>): void {
         clearRecords(target);
         for (const key of Object.keys(newCache)) {

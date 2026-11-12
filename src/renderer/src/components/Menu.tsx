@@ -8,9 +8,11 @@ import TagIcon from '@mui/icons-material/Tag';
 import { Link } from 'react-router-dom';
 
 const MenuOuterWrapper = styled.div`
-    width: 100%;
     display: flex;
     flex-direction: row;
+    flex: 1;
+    height: 100vh;
+    width: 100vw;
 `;
 
 const MenuWrapper = styled.div`
@@ -18,17 +20,7 @@ const MenuWrapper = styled.div`
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    &,
-    a,
-    a:visited {
-        color: #a2ecfb;
-    }
-    a:active {
-        color: #ecfba2;
-    }
-    a:hover {
-        color: #a2fbec;
-    }
+    color: #244566;
 `;
 
 function Menu(): React.JSX.Element {
