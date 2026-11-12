@@ -1,9 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
+import { type Api } from './index.d';
 import * as $schema from '../schema';
 
 // Custom APIs for renderer
-const api = {
+const api: Api = {
     db: {
         getApps(): $schema.AppsRawBuilder[] {
             const raw = ipcRenderer.sendSync('db:get:apps');
@@ -52,7 +53,7 @@ const api = {
     },
     fs: {
         // getDffEntries(): DffEntry (type not exposed to renderer!)
-        deleteDffDuplicates(): number {
+        deleteDuplicates(): number {
             return ipcRenderer.sendSync('fs:delete:dffDuplicates');
         },
 

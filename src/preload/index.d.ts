@@ -1,27 +1,30 @@
 import { ElectronAPI } from '@electron-toolkit/preload';
-import { TagsData } from '@schema/Tags';
+import * as $schema from '../schema';
 
-declare global {
-    interface Window {
-        electron: ElectronAPI;
-        api: {
-            db: {
-                getApps(): AppsData;
-                updateApps(value: AppsData);
-                getFolders(): FoldersData;
-                updateFolders(value: FoldersData);
-                getFiles(): FilesData;
-                updateFiles(value: FilesData);
-                getSwaps(): SwapsData;
-                updateSwaps(value: SwapsData);
-                getTags(): TagsData;
-                updateTags(value: TagsData);
+type Api = {            db: {
+                getApps(): $schema.AppsRawBuilder[];
+                updateApps(value: $schema.AppsData);
+                getFolders(): $schema.FoldersRawBuilder[];
+                updateFolders(value: $schema.FoldersData);
+                getFiles(): $schema.FilesRawBuilder[];
+                updateFiles(value: $schema.FilesData);
+                getSwaps(): $schema.SwapsRawBuilder[];
+                updateSwaps(value: $schema.SwapsData);
+                getTags(): $schema.TagsRawBuilder[];
+                updateTags(value: $schema.TagsData);
             };
             fs: {
                 deleteDuplicates(): number;
                 getSourcesInGroup(group: string): string[];
                 getAllSources(): Record<string, string[]>;
             };
-        };
+}
+
+declare global {
+    interface Window {
+        electron: ElectronAPI;
+        api: Api;
     }
 }
+
+export { type Api };
