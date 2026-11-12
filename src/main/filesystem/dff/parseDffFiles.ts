@@ -12,7 +12,12 @@ function dffEntriesFromRawText(config: Config, rawText: string): DffEntry[] {
 
     let currentLines: string[] = [];
 
-    if (!config.silent) {
+    // These methods may not be available on some debuggers.
+    const hasFlexibleOutput =
+        !!process.stdout.clearLine && !!process.stdout.cursorTo && !!process.stdout.write;
+    const showFlexibleOutput = hasFlexibleOutput && !config.silent;
+
+    if (showFlexibleOutput) {
         process.stdout.write('Processed 0 entries');
     }
 
@@ -20,7 +25,7 @@ function dffEntriesFromRawText(config: Config, rawText: string): DffEntry[] {
         if (currentLines.length > 0) {
             const entry = DffEntry.fromRawLines(config, currentLines);
             entries.push(entry);
-            if (!config.silent) {
+            if (showFlexibleOutput) {
                 process.stdout.clearLine(0);
                 process.stdout.cursorTo(0);
                 process.stdout.write(`Processed ${entries.length} entries`);
@@ -37,7 +42,7 @@ function dffEntriesFromRawText(config: Config, rawText: string): DffEntry[] {
         }
     }
     processCurrentLines();
-    if (!config.silent) {
+    if (showFlexibleOutput) {
         process.stdout.write('\n');
     }
     if (config.debug) {
