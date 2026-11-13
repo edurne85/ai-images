@@ -46,4 +46,5 @@ export {
     TagsByTag,
     type TagsData,
     type TagsByTagData,
+    type TagRecordEntry,
 } from './Tags';
