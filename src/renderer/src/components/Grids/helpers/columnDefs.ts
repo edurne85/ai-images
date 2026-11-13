@@ -1,6 +1,6 @@
 import { type Column } from 'react-open-source-grid';
 import { type DbProvider } from '@renderer/providers/DbProvider';
-import { folderFormatter } from './formatters';
+import { fileRefFormatter, folderFormatter, tagsFromatter } from './formatters';
 
 const baseColumn: Partial<Column> = {
     pinnable: false,
@@ -17,6 +17,12 @@ const idColumn: Partial<Column> = {
     width: 55,
 };
 
+const countColumn: Partial<Column> = {
+    ...baseColumn,
+    width: 70,
+    valueFormatter: (value: number): string => `${value || ''}`,
+};
+
 const boolColumn: Partial<Column> = {
     ...baseColumn,
     width: 65,
@@ -27,9 +33,27 @@ const boolColumn: Partial<Column> = {
 function folderColumn(dbContext: DbProvider): Partial<Column> {
     return {
         ...baseColumn,
+        width: 150,
         sortable: false,
         valueFormatter: folderFormatter(dbContext),
     };
 }
 
-export { folderColumn, idColumn, boolColumn, baseColumn };
+function fileRefColumn(dbContext: DbProvider): Partial<Column> {
+    return {
+        ...baseColumn,
+        width: 150,
+        sortable: false,
+        valueFormatter: fileRefFormatter(dbContext),
+    };
+}
+
+function tagsColumn(dbContext: DbProvider): Partial<Column> {
+    return {
+        ...baseColumn,
+        sortable: false,
+        valueFormatter: tagsFromatter(dbContext),
+    };
+}
+
+export { folderColumn, idColumn, countColumn, boolColumn, baseColumn, fileRefColumn, tagsColumn };

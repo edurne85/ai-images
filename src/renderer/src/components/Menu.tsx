@@ -32,9 +32,15 @@ function Menu(): React.JSX.Element {
             <Link to="/apps">
                 <AppsIcon />
             </Link>
-            <SourceIcon />
-            <ImageIcon />
-            <PhotoLibraryIcon />
+            <Link to="/folders">
+                <SourceIcon />
+            </Link>
+            <Link to="/files">
+                <ImageIcon />
+            </Link>
+            <Link to ="/swaps">
+                <PhotoLibraryIcon />
+            </Link>
             <TagIcon />
         </MenuWrapper>
     );
