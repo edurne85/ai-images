@@ -1,8 +1,15 @@
-// docs: https://reactdatagrid.dev/demo/standard
 import { DataGrid, type Column, type Row } from 'react-open-source-grid';
 import { DbContext } from '@renderer/providers/DbProvider';
 import { useContext } from 'react';
-import { GridWrapper, baseColumn, boolColumn, folderColumn, idColumn } from './Grids';
+import {
+    GridWrapper,
+    baseColumn,
+    idColumn,
+    boolColumn,
+    folderColumn,
+    style,
+    virtualScrollConfig,
+} from './helpers';
 
 function AppsGrid(): React.JSX.Element {
     const dbContext = useContext(DbContext);
@@ -22,7 +29,11 @@ function AppsGrid(): React.JSX.Element {
 
     return (
         <GridWrapper>
-            <DataGrid rows={rows} columns={columns} style={{ flex: 1 }} />
+            <DataGrid
+                {...{ rows, columns, style, virtualScrollConfig }}
+                hideToolbar={true}
+                densityMode="ultraCompact"
+            />
         </GridWrapper>
     );
 }

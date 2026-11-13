@@ -5,6 +5,11 @@ import { folderFormatter } from './formatters';
 const baseColumn: Partial<Column> = {
     pinnable: false,
     width: 200,
+    cellStyle: {
+        fontFamily: 'var(--font-family)',
+    },
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    tooltipValueGetter: (_: any, value: any): string => `${value || ''}`,
 };
 
 const idColumn: Partial<Column> = {

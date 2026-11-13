@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router-dom';
-import { AppsGrid } from '../components/AppsGrid';
+import { AppsGrid } from '../components/Grids';
 
 function appsRoutes(): RouteObject[] {
     return [

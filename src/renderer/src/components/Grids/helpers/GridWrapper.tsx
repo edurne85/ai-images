@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 const GridWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: auto;
 `;
 
 export { GridWrapper };
