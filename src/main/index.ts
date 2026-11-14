@@ -2,11 +2,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-import { type Config, initializeConfig } from './config.defs';
+import { type Config, type ConfigWithDb, initializeConfig } from './config.defs';
 import { rawConfig } from './config';
-import { DbLinks } from '../DbLinks';
 import { registerApiHandlers } from './api';
-import { deleteAllDuplicates } from './filesystem/dff/deleteDuplicates';
+import { startDbLinks, matchFolders, autoDeleteDuplicates } from './startup-checks';
 
 let config: Config | null = null;
 
@@ -60,47 +59,30 @@ app.whenReady().then(async () => {
     ipcMain.on('ping', () => console.log('pong'));
 
     // Initialize config and data links
-    try {
-        config = await initializeConfig(rawConfig);
-        if (config.debug) {
-            console.debug('Processed config', config);
-        }
-        if (config.db) {
-            const dataLink = new DbLinks(config.db);
-            dataLink.fetchAll().then(() => {
-                if (config!.debug) {
-                    console.debug(
-                        'Fetched data:\n',
-                        `\t${dataLink.foldersCount} folders,\n`,
-                        `\t${dataLink.tagsCount} tags,\n`,
-                        `\t${dataLink.appsCount} apps,\n`,
-                        `\t${dataLink.filesCount} files,\n`,
-                        `\t${dataLink.swapsCount} swaps,\n`,
-                        `\t${dataLink.fileTagsCount} file tags entries`
-                    );
-                }
-            });
-            registerApiHandlers({ config });
-        } else {
-            console.warn('No database connection available');
-        }
-        if (config.autoDeleteDuplicates) {
-            const deleted = deleteAllDuplicates(config);
-            if (!config.silent && deleted > 0) {
-                console.info(`Deleted ${deleted} duplicates`);
+    (async () => {
+        try {
+            config = await initializeConfig(rawConfig);
+            if (config.debug) {
+                console.debug('Processed config', config);
             }
+            const dbLinks = await startDbLinks(config);
+            registerApiHandlers({ config });
+            autoDeleteDuplicates(config);
+            if (config.db && dbLinks) {
+                await matchFolders(config as ConfigWithDb, dbLinks);
+            }
+        } catch (error) {
+            console.error('Failed to initialize config', error);
         }
-    } catch (error) {
-        console.error('Failed to initialize config', error);
-    }
 
-    createWindow();
+        createWindow();
 
-    app.on('activate', function () {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) createWindow();
-    });
+        app.on('activate', function () {
+            // On macOS it's common to re-create a window in the app when the
+            // dock icon is clicked and there are no other windows open.
+            if (BrowserWindow.getAllWindows().length === 0) createWindow();
+        });
+    })();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

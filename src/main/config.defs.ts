@@ -7,6 +7,9 @@ type RawConfig = Environments & {
     debug?: boolean;
     silent?: boolean;
     autoDeleteDuplicates?: boolean;
+    autoInsertFolders?: boolean;
+    autoInsertSources?: boolean;
+    autoDeleteSources?: boolean;
     sourcesPathPrefix: string;
     dbPath: string;
     dffPath?: Nullable<string>;
@@ -21,6 +24,7 @@ type Config = CleanRawConfig & {
     db: Awaited<ReturnType<typeof open>> | null;
     runningEnvironment: ReturnType<typeof getRunningEnvironment>;
 };
+type ConfigWithDb = Config & { db: NonNullable<Config['db']> };
 
 async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
     // Initialize optional values:
@@ -35,6 +39,9 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
     const dffPathMapper = pathMappers[pickMapper(runningEnvironment, Environment.win)];
     const dffPath = rawConfig.dffPath ?? null;
     const dffMappedPath = dffPath ? dffPathMapper(dffPath) : null;
+    const autoInsertFolders = rawConfig.autoInsertFolders ?? false;
+    const autoInsertSources = rawConfig.autoInsertSources ?? false;
+    const autoDeleteSources = rawConfig.autoDeleteSources ?? false;
     // Establish DB connection:
     let db: Awaited<ReturnType<typeof open>> | null = null;
     const dbFile = dbPathMapper(rawConfig.dbPath);
@@ -62,6 +69,9 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
         debug,
         silent,
         autoDeleteDuplicates,
+        autoInsertFolders,
+        autoInsertSources,
+        autoDeleteSources,
         dffPath,
         // Additional / computed values:
         sourcesEnvironment,
@@ -74,5 +84,5 @@ async function initializeConfig(rawConfig: RawConfig): Promise<Config> {
     };
 }
 
-export type { RawConfig, Config };
+export type { RawConfig, Config, ConfigWithDb };
 export { initializeConfig };

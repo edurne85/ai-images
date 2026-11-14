@@ -26,6 +26,7 @@ export default defineConfig(
         rules: {
             ...eslintPluginReactHooks.configs.recommended.rules,
             ...eslintPluginReactRefresh.configs.vite.rules,
+            'guard-for-in': 'error',
         },
     },
     eslintConfigPrettier

@@ -7,6 +7,9 @@ const rawConfig: RawConfig = {
     sourcesPathPrefix: 'C:\\Users\\ExampleUser\\Images\\',
     dbPath: 'C:\\Users\\ExampleUser\\Images\\db.sqlite',
     dffPath: 'C:\\Program Files (x86)\\Duplicate Files Finder\\dupf.exe',
+    autoInsertFolders: true,
+    autoInsertSources: true,
+    autoDeleteSources: false,
 };
 
 export { rawConfig };

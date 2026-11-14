@@ -38,7 +38,7 @@ function Menu(): React.JSX.Element {
             <Link to="/files">
                 <ImageIcon />
             </Link>
-            <Link to ="/swaps">
+            <Link to="/swaps">
                 <PhotoLibraryIcon />
             </Link>
             <TagIcon />
