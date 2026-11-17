@@ -1,6 +1,7 @@
 import { DataGrid, type Column, type Row } from 'react-open-source-grid';
 import { DbContext } from '@renderer/providers/DbProvider';
 import { useContext } from 'react';
+import { Link, useParams } from "react-router";
 import {
     GridWrapper,
     baseColumn,
@@ -14,28 +15,35 @@ import {
 import { type SwapsRawBuilder } from 'src/schema';
 import { tagsColumn } from './helpers/columnDefs';
 
-type FilesGridProps = {
-    folderId?: number;
-};
-
-function FilesGrid({ folderId }: FilesGridProps): React.JSX.Element {
+function FilesGrid(): React.JSX.Element {
     const dbContext = useContext(DbContext);
+    const { folderId } = useParams();
+    const folderIdParsed = Number.parseInt(folderId || '');
 
     const columns: Column[] = [
         { field: 'id', headerName: 'ID', ...idColumn, width: 115 },
-        ...(typeof folderId === 'number'
-            ? []
-            : [{ field: 'folder', headerName: 'Folder', ...folderColumn(dbContext) }]),
+        ...(Number.isNaN(folderIdParsed)
+            ? [{ field: 'folder', headerName: 'Folder', ...folderColumn(dbContext) }]
+            : []),
         { field: 'name', headerName: 'File name', ...baseColumn, width: 300 },
         { field: 'notes', headerName: 'Notes', ...baseColumn, width: 300 },
-        { field: 'swaps', headerName: 'Swaps', ...countColumn },
+        {
+            field: 'swaps',
+            headerName: 'Swaps',
+            ...countColumn,
+            renderCell: (row: Row) => (
+                row.swaps > 0
+                ? <Link to={`/swaps/${row.id}`}>{row.swaps}</Link>
+                : <></>
+            ),
+        },
         { field: 'tags', headerName: 'Tags', ...tagsColumn(dbContext) },
     ];
 
     const allFiles = Object.values(dbContext.files.raw);
     const filesFiltered =
-        typeof folderId === 'number'
-            ? allFiles.filter((file) => file.folder === folderId)
+        !!folderIdParsed 
+            ? allFiles.filter((file) => file.folder === folderIdParsed)
             : allFiles;
 
     const rows = filesFiltered as Row[];

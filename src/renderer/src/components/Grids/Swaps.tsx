@@ -10,19 +10,18 @@ import {
     virtualScrollConfig,
     boolColumn,
 } from './helpers';
+import { useParams } from 'react-router';
 
-type SwapsGridProps = {
-    sourceId?: number;
-};
-
-function SwapsGrid({ sourceId }: SwapsGridProps): React.JSX.Element {
+function SwapsGrid(): React.JSX.Element {
     const dbContext = useContext(DbContext);
+    const { sourceId } = useParams();
+    const sourceIdParsed = Number.parseInt(sourceId || '');
 
     const columns: Column[] = [
         { field: 'id', headerName: 'ID', ...idColumn },
-        ...(typeof sourceId === 'number'
-            ? []
-            : [{ field: 'source', headerName: 'Source', ...fileRefColumn(dbContext) }]),
+        ...(Number.isNaN(sourceIdParsed)
+            ? [{ field: 'source', headerName: 'Source', ...fileRefColumn(dbContext) }]
+            : []),
         { field: 'date', headerName: 'Date', ...baseColumn },
         { field: 'fail', headerName: 'Fail', ...boolColumn },
         { field: 'Output', headerName: 'Output file name', ...baseColumn, width: 300 },
@@ -30,8 +29,8 @@ function SwapsGrid({ sourceId }: SwapsGridProps): React.JSX.Element {
 
     const allSwaps = Object.values(dbContext.swaps.raw);
     const swapsFiltered =
-        typeof sourceId === 'number'
-            ? allSwaps.filter((swap) => swap.source === sourceId)
+        !!sourceIdParsed
+            ? allSwaps.filter((swap) => swap.source === sourceIdParsed)
             : allSwaps;
 
     const rows = swapsFiltered as Row[];

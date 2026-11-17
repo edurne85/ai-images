@@ -26,7 +26,11 @@ async function startDbLinks(config: Config): Promise<DbLinks | null> {
     }
 }
 
-async function matchFilesInFolder(config: ConfigWithDb, dbLinks: DbLinks, folder: FoldersRecord): Promise<void> {
+async function matchFilesInFolder(
+    config: ConfigWithDb,
+    dbLinks: DbLinks,
+    folder: FoldersRecord
+): Promise<void> {
     const dbFiles = dbLinks.files.data;
     const filesInFs = new Set<string>(getSourcesInGroup(config, folder.name));
     const deleteQuery = `DELETE FROM SourceFiles WHERE id = ?`;

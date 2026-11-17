@@ -11,6 +11,7 @@ import {
     virtualScrollConfig,
 } from './helpers';
 import { type FilesRawBuilder } from 'src/schema';
+import { Link } from 'react-router';
 
 function FoldersGrid(): React.JSX.Element {
     const dbContext = useContext(DbContext);
@@ -20,7 +21,16 @@ function FoldersGrid(): React.JSX.Element {
         { field: 'name', headerName: 'Folder name', ...baseColumn },
         { field: 'sync', headerName: "Sync'd", ...boolColumn },
         { field: 'notes', headerName: 'Notes', ...baseColumn },
-        { field: 'filesCount', headerName: 'Files', ...countColumn },
+        {
+            field: 'filesCount',
+            headerName: 'Files',
+            ...countColumn,
+            renderCell: (row: Row) => (
+                row.filesCount > 0
+                ? <Link to={`/files/${row.id}`}>{row.filesCount}</Link>
+                : <></>
+            ),
+        },
     ];
 
     const rows = Object.values(dbContext.folders.raw) as Row[];

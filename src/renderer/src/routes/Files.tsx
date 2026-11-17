@@ -4,12 +4,8 @@ import { FilesGrid } from '../components/Grids';
 function filesRoutes(): RouteObject[] {
     return [
         {
-            path: '/files',
+            path: '/files/:folderId?',
             element: <FilesGrid />,
-        },
-        {
-            path: '/files/:folderId',
-            Component: FilesGrid,
         },
         /*{
             path: '/file/:fileId',
